@@ -1,0 +1,33 @@
+plugins {
+    id 'war'
+    id 'org.gretty' version '2.2.0'
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+sourceCompatibility = 8
+def commonsVersion = '3.8'
+
+
+dependencies {
+    compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
+    compileOnly 'org.projectlombok:lombok:1.18.2'
+    annotationProcessor 'org.projectlombok:lombok:1.18.2'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: commonsVersion
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.9.6'
+    compile group: 'org.hsqldb', name: 'hsqldb', version: '2.4.1'
+    compile group: 'commons-dbcp', name: 'commons-dbcp', version: '1.4'
+    compile group: 'org.hsqldb',
+            name: 'hsqldb',
+            version: '2.4.1'
+}
+
+gretty {
+    contextPath = '/'
+    //classpath = sourceSets.main.runtimeClasspath
+}
+
+
