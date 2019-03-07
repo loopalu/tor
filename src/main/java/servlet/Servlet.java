@@ -21,6 +21,7 @@ public class Servlet extends HttpServlet {
     private int turnoverWithoutVAT = 0; // Whole price.
     private int turnoverVAT = 0;
     private int turnoverWithVAT = 0;
+    private int randomJamaGitiPushiJaoks = 0;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
