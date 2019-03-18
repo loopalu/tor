@@ -50,8 +50,8 @@ public class CreateClient {
         System.out.println("Client Address : " + ip);
 
 
-        try {
-            socket = new Socket(host, port);
+        try (Socket socket = new Socket(host, port)) {
+
             System.out.println("Connected");
 
             br = new BufferedReader(new InputStreamReader(System.in));
@@ -115,7 +115,6 @@ public class CreateClient {
             // Code = 200.
             if (result.getStatusCode() == HttpStatus.OK) {
                 Connect connect2 = result.getBody();
-
 
                 if (connect2 != null) {
                     System.out.println("Connected with: http://localhost:" + connectToPort + " " + connect2.getLetsConnect());
