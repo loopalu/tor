@@ -22,19 +22,19 @@ public class ClientController {
     RestTemplate restTemplate;
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public String createProducts() throws IOException {
+    public String connectWithNeighbour() throws IOException {
         Connect connect = new Connect();
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-        System.out.println("Wants to connect: ");
-        String line = br.readLine();
-
-        if (line.equals("true")) {
-            connect.setLetsConnect(true);
-        } else {
-            connect.setLetsConnect(false);
-        }
+        connect.setLetsConnect(true);
+//        System.out.println("Wants to connect: ");
+//        String line = br.readLine();
+//
+//        if (line.equals("true")) {
+//            connect.setLetsConnect(true);
+//        } else {
+//            connect.setLetsConnect(false);
+//        }
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
