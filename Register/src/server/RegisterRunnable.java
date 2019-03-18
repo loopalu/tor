@@ -3,16 +3,19 @@ package server;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
 import java.io.*;
 import java.net.Socket;
+import java.util.Arrays;
+import java.util.Random;
 
 
-public class WorkerRunnable implements Runnable{
+public class RegisterRunnable implements Runnable{
 
     protected Socket clientSocket;
     protected String serverText;
 
-    public WorkerRunnable(Socket clientSocket, String serverText) {
+    public RegisterRunnable(Socket clientSocket, String serverText) {
         this.clientSocket = clientSocket;
         this.serverText   = serverText;
     }
@@ -50,7 +53,7 @@ public class WorkerRunnable implements Runnable{
                 String message = "HTTP/1.1 200 OK\r\n" +
                         "Content-Type: text/html\r\n" +
                         "\r\n" +
-                        "Go Fuck urself";
+                        "No data was sent";
                 output.write(message.getBytes());
                 output.close();
                 input.close();
@@ -69,7 +72,7 @@ public class WorkerRunnable implements Runnable{
             System.out.println(actionNeeded);
             System.out.println(ip);
             String message;
-            if (actionNeeded.equals("Enter")) {
+            if (actionNeeded.equals("Enter") && test.get("ip") != null ) {
                 message = actionEnter(ip);
             } else if (actionNeeded.equals("Leave") && (test.get("LeaverIp") != null) && (test.get("PairedIp") != null)){
                 message = actionLeave(ip,(String) test.get("LeaverIp"), (String) test.get("PairedIp"));
@@ -99,20 +102,22 @@ public class WorkerRunnable implements Runnable{
 
     private String actionEnter(String ip) {
         String message;
-        Register.listOfIps.add(ip);
+        if (!Register.listOfIps.contains(ip)) {
+            Register.listOfIps.add(ip);
+        }
         while (true) {
             System.out.println(Register.listOfIps);
             if (Register.listOfIps.size() > 2) {
-                String[] ips = new String[Register.listOfIps.size() - 1];
+                String[] ips = new String[2];
                 int n = 0;
-                for (String i : Register.listOfIps) {
-                    if (!i.equals(ip)) {
-                        ips[n] = i;
+                while (n < 2) {
+                    int rnd = new Random().nextInt(Register.listOfIps.size());
+                    if (!Register.listOfIps.get(rnd).equals(ip) && !(Arrays.asList(ips).contains(Register.listOfIps.get(rnd)))) {
+                        ips[n] = Register.listOfIps.get(rnd);
                         n += 1;
                     }
                 }
                 String str = String.join(",", ips);
-                System.out.println(str);
                 JSONObject body = new JSONObject();
                 body.put("ips",str);
                 message = "HTTP/1.1 200 OK\r\n" +

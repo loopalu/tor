@@ -3,13 +3,12 @@ package server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
 
 public class Register implements Runnable {
 
     private int port;
-    public static Set<String> listOfIps = new HashSet<>();
+    public static ArrayList<String> listOfIps = new ArrayList<>();
     public ServerSocket serverSocket;
     private boolean isStopped = false;
 
@@ -18,6 +17,7 @@ public class Register implements Runnable {
     }
 
     public void run() {
+        new Thread(new Timer()).start();
         openServerSocket();
         while(! isStopped()){
             Socket clientSocket = null;
@@ -33,7 +33,7 @@ public class Register implements Runnable {
             }
 
             new Thread(
-                    new WorkerRunnable(
+                    new RegisterRunnable(
                             clientSocket, "Multithreaded Server")
             ).start();
         }
@@ -61,4 +61,5 @@ public class Register implements Runnable {
             throw new RuntimeException("Cannot open port 8080", e);
         }
     }
+
 }
