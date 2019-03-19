@@ -20,6 +20,7 @@ public class Timer implements Runnable{
         }
     }
 
+
     private void serviceRemove() throws IOException {
         String str;
         ArrayList<String> arr = new ArrayList<>(Register.listOfIps);

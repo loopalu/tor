@@ -54,11 +54,4 @@ public class ClientController {
         return new ObjectMapper().writeValueAsString(connect);
     }
 
-
-    @GetMapping("/")
-    @ResponseBody
-    public Client iAmAlive() {
-        return new Client("", "Enter");
-    }
-
 }
