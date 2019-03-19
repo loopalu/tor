@@ -24,18 +24,18 @@ public class Timer implements Runnable{
         String str;
         ArrayList<String> arr = new ArrayList<>(Register.listOfIps);
         for (String i : arr) {
+            System.out.println(i);
             if (i.length() <= 5) {
                 str = "http://localhost:" + i + "/";
             } else {
                 str = "http://" + i + "/";
             }
-            System.out.println(str);
             try {
-                URL urlServer = new URL("your server url");
+                URL urlServer = new URL(str);
                 HttpURLConnection urlConn = (HttpURLConnection) urlServer.openConnection();
                 urlConn.setConnectTimeout(1000); //<- 3Seconds Timeout
                 urlConn.connect();
-                if (urlConn.getResponseCode() == 200) {
+                if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     continue;
                 } else {
                     Register.listOfIps.remove(i);

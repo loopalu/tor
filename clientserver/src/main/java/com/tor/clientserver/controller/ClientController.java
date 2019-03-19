@@ -2,6 +2,7 @@ package com.tor.clientserver.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tor.clientserver.model.Client;
 import com.tor.clientserver.model.Connect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -51,6 +52,13 @@ public class ClientController {
 //        }
 
         return new ObjectMapper().writeValueAsString(connect);
+    }
+
+
+    @GetMapping("/")
+    @ResponseBody
+    public Client iAmAlive() {
+        return new Client("", "Enter");
     }
 
 }

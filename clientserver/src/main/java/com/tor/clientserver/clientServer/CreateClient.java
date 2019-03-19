@@ -52,6 +52,8 @@ public class CreateClient {
 
         try (Socket socket = new Socket(host, port)) {
 
+            socket.setKeepAlive(true);
+
             System.out.println("Connected");
 
             br = new BufferedReader(new InputStreamReader(System.in));
