@@ -13,7 +13,7 @@ public class Timer implements Runnable{
         try {
             while (true) {
                 serviceRemove();
-                Thread.sleep(60 * 1000);
+                Thread.sleep(300 * 1000);
             }
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
@@ -24,6 +24,7 @@ public class Timer implements Runnable{
     private void serviceRemove() throws IOException {
         String str;
         ArrayList<String> arr = new ArrayList<>(Register.listOfIps);
+        System.out.println("Here");
         for (String i : arr) {
             System.out.println(i);
             if (i.length() <= 5) {
@@ -34,8 +35,6 @@ public class Timer implements Runnable{
             try {
                 URL urlServer = new URL(str);
                 HttpURLConnection urlConn = (HttpURLConnection) urlServer.openConnection();
-                //Timeout 1s
-                urlConn.setConnectTimeout(1000);
                 urlConn.connect();
                 if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     continue;
