@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class Timer implements Runnable{
 
-
+    //Every 6 seconds activates serviceRemove function
     public void run() {
         try {
             while (true) {
@@ -20,7 +20,7 @@ public class Timer implements Runnable{
         }
     }
 
-
+    //Function to check all the ips in listOfIps and ping them to see if they there, if not deletes them from list
     private void serviceRemove() throws IOException {
         String str;
         ArrayList<String> arr = new ArrayList<>(Register.listOfIps);
@@ -34,7 +34,8 @@ public class Timer implements Runnable{
             try {
                 URL urlServer = new URL(str);
                 HttpURLConnection urlConn = (HttpURLConnection) urlServer.openConnection();
-                urlConn.setConnectTimeout(1000); //<- 3Seconds Timeout
+                //Timeout 1s
+                urlConn.setConnectTimeout(1000);
                 urlConn.connect();
                 if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     continue;
@@ -42,7 +43,6 @@ public class Timer implements Runnable{
                     Register.listOfIps.remove(i);
                 }
             } catch (IOException e) {
-                System.out.println(e);
                 Register.listOfIps.remove(i);
             }
         }

@@ -69,17 +69,15 @@ public class RegisterRunnable implements Runnable{
             }
             String actionNeeded = (String) test.get("action");
             String ip = (String) test.get("ip");
-            System.out.println(actionNeeded);
-            System.out.println(ip);
             String message;
             if (actionNeeded.equals("Enter") && test.get("ip") != null ) {
                 message = actionEnter(ip);
-            } else if (actionNeeded.equals("Leave") && (test.get("LeaverIp") != null) && (test.get("PairedIp") != null)){
-                message = actionLeave(ip,(String) test.get("LeaverIp"), (String) test.get("PairedIp"));
-            } else if (actionNeeded.equals("NewPairs") && (test.get("OldPair1") != null) && (test.get("OldPair2") != null)) {
-                Register.listOfIps.remove((String) test.get("OldPair1"));
-                Register.listOfIps.remove((String) test.get("OldPair2"));
-                message = actionEnter(ip);
+            //} else if (actionNeeded.equals("Leave") && (test.get("LeaverIp") != null) && (test.get("PairedIp") != null)){
+                //message = actionLeave(ip,(String) test.get("LeaverIp"), (String) test.get("PairedIp"));
+            //} else if (actionNeeded.equals("NewPairs") && (test.get("OldPair1") != null) && (test.get("OldPair2") != null)) {
+                //Register.listOfIps.remove((String) test.get("OldPair1"));
+                //Register.listOfIps.remove((String) test.get("OldPair2"));
+                //message = actionEnter(ip);
             } else {
                 message = "HTTP/1.1 200 OK\r\n" +
                         "Content-Type: text/html\r\n" +
@@ -130,7 +128,7 @@ public class RegisterRunnable implements Runnable{
         return message;
     }
 
-    private String actionLeave(String ip, String leaverIp, String pairIp) {
+    /*private String actionLeave(String ip, String leaverIp, String pairIp) {
         String message;
         Register.listOfIps.remove(leaverIp);
         while (true) {
@@ -155,5 +153,5 @@ public class RegisterRunnable implements Runnable{
             }
         }
         return message;
-    }
+    }*/
 }
