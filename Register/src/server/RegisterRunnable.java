@@ -29,6 +29,7 @@ public class RegisterRunnable implements Runnable{
             line = in.readLine();
             System.out.println("HTTP-HEADER: " + line);
             line = "";
+
             // looks for post data
             int postDataI = -1;
             while ((line = in.readLine()) != null && (line.length() != 0)) {
@@ -41,6 +42,7 @@ public class RegisterRunnable implements Runnable{
                 }
             }
             String postData = null;
+
             // read the post data
             if (postDataI > 0) {
                 char[] charArray = new char[postDataI];
@@ -49,6 +51,7 @@ public class RegisterRunnable implements Runnable{
             }
             System.out.println(postData);
 
+            //On false entry sends back a message and closes thread
             if (postData == null) {
                 String message = "HTTP/1.1 200 OK\r\n" +
                         "Content-Type: text/html\r\n" +
@@ -57,6 +60,8 @@ public class RegisterRunnable implements Runnable{
                 output.write(message.getBytes());
                 output.close();
                 input.close();
+                clientSocket = null;
+                serverText = null;
                 return;
             }
 
@@ -70,6 +75,8 @@ public class RegisterRunnable implements Runnable{
             String actionNeeded = (String) test.get("action");
             String ip = (String) test.get("ip");
             String message;
+
+            //Compiles a message to send back based on information gotten from the body of message received.
             if (actionNeeded.equals("Enter") && test.get("ip") != null ) {
                 message = actionEnter(ip);
             //} else if (actionNeeded.equals("Leave") && (test.get("LeaverIp") != null) && (test.get("PairedIp") != null)){
@@ -98,6 +105,7 @@ public class RegisterRunnable implements Runnable{
         }
     }
 
+    //Code to take 2 random ip-s from listOfIps and send them back. Wont run until at least 3 people have entered
     private String actionEnter(String ip) {
         String message;
         if (!Register.listOfIps.contains(ip)) {
