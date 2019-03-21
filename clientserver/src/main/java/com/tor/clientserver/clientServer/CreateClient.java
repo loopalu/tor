@@ -14,6 +14,7 @@ public class CreateClient {
 
     static final String URL_CREATE_CLIENT = "http://localhost:9000/";
     private ClientNeighbours clientNeighbours;
+    private HashMap<Long, String> requests = new HashMap<>();
 
     private static String host = "localhost";
     private static int port = 9000;
@@ -74,8 +75,6 @@ public class CreateClient {
 
                 br = new BufferedReader(new InputStreamReader(System.in));
 
-
-                System.out.println("Enter neighbour to connect with: " + clientNeighbours.getIps());
                 line = br.readLine();
 
                 if (!line.equals("Leave")) {
@@ -120,17 +119,28 @@ public class CreateClient {
                 Connect connect2 = result.getBody();
 
                 if (connect2 != null) {
-                    System.out.println("Connected with: http://localhost:" + connectToPort + " " + connect2.getLetsConnect());
                     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
+                    long id = System.nanoTime();
                     System.out.println("Enter message: ");
+                    System.out.println(id);
                     String line = br.readLine();
                     ArrayList<String> ips = new ArrayList<>(Arrays.asList(clientNeighbours.getIps().split(",")));
-                    long id = System.nanoTime();
+
+
+                    if (line.length() > 5) {
+                        if (line.substring(0, 4).equals("http")) {
+                            requests.put(id, line);
+                        }
+                    }
 
                     for (String port: ips) {
-                        URL url = new URL("http://localhost:" + port + "/download");
-
+                        URL url;
+                        if (port.length() < 6) {
+                            url = new URL("http://localhost:" + port + "/download");
+                        } else {
+                            url = new URL("http://" + port + ":1215/download");
+                        }
 
                         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
                         conn.setRequestMethod("POST");
