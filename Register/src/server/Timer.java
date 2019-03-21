@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class Timer implements Runnable{
 
-    //Every 6 seconds activates serviceRemove function
+    //Every 60 seconds activates serviceRemove function
     public void run() {
         try {
             while (true) {

@@ -17,7 +17,7 @@ public class Register implements Runnable {
     }
 
     public void run() {
-        //new Thread(new Timer()).start();
+        new Thread(new Timer()).start();
         openServerSocket();
         while(! isStopped()){
             Socket clientSocket = null;
