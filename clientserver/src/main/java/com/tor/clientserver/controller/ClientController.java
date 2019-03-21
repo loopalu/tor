@@ -19,6 +19,7 @@ import java.util.Objects;
 public class ClientController {
     @Autowired
     RestTemplate restTemplate;
+    long messageID;
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public String connectWithNeighbour(HttpServletRequest request) throws IOException {
@@ -52,6 +53,13 @@ public class ClientController {
 //        }
 
         return new ObjectMapper().writeValueAsString(connect);
+    }
+
+    @RequestMapping(value = "/download", method = RequestMethod.POST)
+    public String getUrl(HttpServletRequest request) throws IOException {
+        System.out.println(request.getHeader("ID"));
+        System.out.println(request.getHeader("Data"));
+        return "OK\n";
     }
 
 }

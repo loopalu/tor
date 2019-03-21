@@ -8,6 +8,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 public class CreateClient {
 
@@ -36,7 +37,6 @@ public class CreateClient {
         // Code = 200.
         if (result.getStatusCode() == HttpStatus.OK) {
             this.clientNeighbours = result.getBody();
-            System.out.println("Get neighbours: " + clientNeighbours);
         }
 
         return result;
@@ -79,7 +79,10 @@ public class CreateClient {
                 line = br.readLine();
 
                 if (!line.equals("Leave")) {
-                    connectToNeighbour(line, ip);
+                    ArrayList<String> ips = new ArrayList<>(Arrays.asList(clientNeighbours.getIps().split(",")));
+                    Random random = new Random();
+                    String myport = ips.get(random.nextInt(ips.size()));
+                    connectToNeighbour(myport, ip);
                 }
 
             } catch (IOException e) {
@@ -98,7 +101,7 @@ public class CreateClient {
 
     public void connectToNeighbour(String connectToPort, String myPort) {
         try (Socket socket = new Socket(host, Integer.parseInt(connectToPort))) {
-            System.out.println("Connected with neibs");
+            System.out.println("Connected with neighbors");
             RestTemplate restTemplate = new RestTemplate();
 
             Connect connect = new Connect();
@@ -118,13 +121,33 @@ public class CreateClient {
 
                 if (connect2 != null) {
                     System.out.println("Connected with: http://localhost:" + connectToPort + " " + connect2.getLetsConnect());
+                    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+                    System.out.println("Enter message: ");
+                    String line = br.readLine();
+                    ArrayList<String> ips = new ArrayList<>(Arrays.asList(clientNeighbours.getIps().split(",")));
+                    long id = System.nanoTime();
+
+                    for (String port: ips) {
+                        URL url = new URL("http://localhost:" + port + "/download");
+
+
+                        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+                        conn.setRequestMethod("POST");
+                        conn.setRequestProperty("Data", line);
+                        conn.setRequestProperty("ID", String.valueOf(id));
+                        conn.setDoOutput(true);
+
+                        Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+
+                        for (int c; (c = in.read()) >= 0;)
+                            System.out.print((char)c);
+                    }
                 }
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }
 
