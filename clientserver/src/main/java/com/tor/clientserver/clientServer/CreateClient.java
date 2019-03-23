@@ -19,20 +19,24 @@ public class CreateClient {
     private static String host = "localhost";
     private static int port = 9000;
 
+    private Client client;
+
     private Socket socket;
 
-    public ResponseEntity<ClientNeighbours> createClient(String ip, String action) throws MalformedURLException {
+    public ResponseEntity<ClientNeighbours> createClient(String ip, String action, String sendTo) throws MalformedURLException {
 
-        Client client = new Client(ip, action);
+        client = new Client(ip, action);
 
         RestTemplate restTemplate = new RestTemplate();
 
         // Data attached to the request.
         HttpEntity<Client> requestBody = new HttpEntity<>(client);
 
+        String url = "http://localhost:" + sendTo;
+
         // Send request with POST method.
         ResponseEntity<ClientNeighbours> result
-                = restTemplate.postForEntity(URL_CREATE_CLIENT, requestBody, ClientNeighbours.class);
+                = restTemplate.postForEntity(url, requestBody, ClientNeighbours.class);
 
         System.out.println("Status code:" + result.getStatusCode());
         // Code = 200.
@@ -43,57 +47,34 @@ public class CreateClient {
         return result;
     }
 
-    public void startAskingClient(String ip) throws IOException {
-        String line = "";
-        String neighbours;
-        BufferedReader br;
-
-        System.out.println("Client Address : " + ip);
+    public void startAskingClient(String ip, int sendTo) throws IOException {
+        System.out.println("ClientServer Address : " + ip);
 
 
-        try (Socket socket = new Socket(host, port)) {
+        try (Socket socket = new Socket(host, sendTo)) {
 
             System.out.println("Connected");
 
-            br = new BufferedReader(new InputStreamReader(System.in));
+            createClient(ip, "Enter", String.valueOf(sendTo));
 
-            System.out.println("Enter action(Enter or Leave): ");
-            line = br.readLine();
-
-
-            createClient(ip, line);
+            ArrayList<String> ips = new ArrayList<>(Arrays.asList(clientNeighbours.getIps().split(",")));
+            System.out.println(ips);
+            Random random = new Random();
+            String myport = ips.get(random.nextInt(ips.size()));
+            connectToNeighbour(myport, ip);
 
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
-        while (!line.equals("Leave")) {
-            try {
-
-                br = new BufferedReader(new InputStreamReader(System.in));
-
-                line = br.readLine();
-
-                if (!line.equals("Leave")) {
-                    ArrayList<String> ips = new ArrayList<>(Arrays.asList(clientNeighbours.getIps().split(",")));
-                    Random random = new Random();
-                    String myport = ips.get(random.nextInt(ips.size()));
-                    connectToNeighbour(myport, ip);
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("Socket read Error");
-            }
+            System.out.println("Socket read Error");
         }
 
         System.out.println("Closing connection");
 
         // close connection
-        socket.close();
+//        socket.close();
 
     }
 
@@ -103,57 +84,44 @@ public class CreateClient {
             System.out.println("Connected with neighbors");
             RestTemplate restTemplate = new RestTemplate();
 
-            Connect connect = new Connect();
-            connect.setLetsConnect(true);
-            connect.setPort(myPort);
-
-            // Data attached to the request.
-            HttpEntity<Connect> requestBody = new HttpEntity<>(connect);
-
-            // Send request with POST method.
-            ResponseEntity<Connect> result
-                    = restTemplate.postForEntity("http://localhost:" + connectToPort, requestBody, Connect.class);
-
             // Code = 200.
-            if (result.getStatusCode() == HttpStatus.OK) {
-                Connect connect2 = result.getBody();
 
-                if (connect2 != null) {
-                    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-                    long id = System.nanoTime();
-                    System.out.println("Enter message: ");
-                    System.out.println(id);
-                    String line = br.readLine();
-                    ArrayList<String> ips = new ArrayList<>(Arrays.asList(clientNeighbours.getIps().split(",")));
+            long id = System.nanoTime();
+            System.out.println("Enter message: ");
+            System.out.println(id);
+            String line = br.readLine();
+            ArrayList<String> ips = new ArrayList<>(Arrays.asList(clientNeighbours.getIps().split(",")));
+            System.out.println(ips);
 
-
-                    if (line.length() > 5) {
-                        if (line.substring(0, 4).equals("http")) {
-                            requests.put(id, line);
-                        }
-                    }
-
-                    for (String port: ips) {
-                        URL url;
-                        if (port.length() < 6) {
-                            url = new URL("http://localhost:" + port + "/download");
-                        } else {
-                            url = new URL("http://" + port + ":1215/download");
-                        }
-
-                        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-                        conn.setRequestMethod("POST");
-                        conn.setRequestProperty("Data", line);
-                        conn.setRequestProperty("ID", String.valueOf(id));
-                        conn.setDoOutput(true);
-
-                        Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-
-                        for (int c; (c = in.read()) >= 0;)
-                            System.out.print((char)c);
-                    }
+            if (line.length() > 5) {
+                if (line.substring(0, 4).equals("http")) {
+                    requests.put(id, line);
                 }
+            }
+
+            for (String port : ips) {
+                URL url;
+                if (port.length() < 6) {
+                    url = new URL("http://localhost:" + port + "/download");
+                } else {
+                    url = new URL("http://" + port + ":1215/download");
+                }
+
+
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Data", "message " + line);
+                conn.setRequestProperty("ID", String.valueOf(id));
+                conn.setDoOutput(true);
+
+                Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+
+                for (int c; (c = in.read()) >= 0; )
+                    System.out.print((char) c);
+
+
             }
         } catch (IOException e) {
             e.printStackTrace();
