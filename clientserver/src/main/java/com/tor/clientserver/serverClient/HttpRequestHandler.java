@@ -4,7 +4,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class HttpRequestHandler implements Runnable {
-    Socket socket;
+    private Socket socket;
     public static ArrayList<String> listOfIps = new ArrayList<>();
 
     public HttpRequestHandler(Socket socket) throws Exception {
@@ -56,7 +55,7 @@ public class HttpRequestHandler implements Runnable {
                     output.write(message.getBytes());
                     output.close();
                     input.close();
-                    socket = null;
+
                     return;
 
                 }
@@ -89,7 +88,7 @@ public class HttpRequestHandler implements Runnable {
                 output.write(message.getBytes());
                 output.close();
                 input.close();
-                socket = null;
+
                 return;
             }
 
@@ -118,7 +117,7 @@ public class HttpRequestHandler implements Runnable {
             output.close();
             input.close();
 
-            socket = null;
+
             long time = System.currentTimeMillis();
             System.out.println("Request processed: " + time);
 

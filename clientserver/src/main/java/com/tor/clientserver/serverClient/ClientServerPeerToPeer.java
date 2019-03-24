@@ -2,17 +2,16 @@ package com.tor.clientserver.serverClient;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.tor.clientserver.serverClient.HttpRequestHandler;
 
-public class PeerNode {
+public class ClientServerPeerToPeer {
     private int port;
 
-    PeerNode(int port) {
+    public ClientServerPeerToPeer(int port) {
         this.port = port;
 
         new Thread(new Runnable() {
@@ -25,6 +24,20 @@ public class PeerNode {
 
 
     private void startClientServer() {
+
+
+        try {
+            URL url = new URL("http://localhost:9000/");
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+            int statusCode = http.getResponseCode();
+            if (statusCode == 200) {
+                port = ThreadLocalRandom.current().nextInt(7000, 8000);
+            }
+        } catch (IOException e) {
+            System.out.println("Creating server");
+        }
+
+
         try {
             // Establish the listen socket.
             ServerSocket server = new ServerSocket(port);
@@ -43,11 +56,7 @@ public class PeerNode {
                 // Start the thread.
                 thread.start();
 
-                System.out.println("Thread started for " + port);
-
-                if (HttpRequestHandler.listOfIps.size() == 3) {
-                    server.close();
-                }
+                System.out.println("Thread started for " + connection.getLocalPort());
             }
 
         } catch (Exception e) {
@@ -55,5 +64,6 @@ public class PeerNode {
         }
 
     }
+
 
 }

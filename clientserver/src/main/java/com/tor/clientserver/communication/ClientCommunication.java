@@ -1,8 +1,7 @@
-package com.tor.clientserver.clientServer;
+package com.tor.clientserver.communication;
 
 import com.tor.clientserver.model.Client;
 import com.tor.clientserver.model.ClientNeighbours;
-import com.tor.clientserver.model.Connect;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -10,28 +9,22 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-public class CreateClient {
-
-    static final String URL_CREATE_CLIENT = "http://localhost:9000/";
+public class ClientCommunication {
     private ClientNeighbours clientNeighbours;
     private HashMap<Long, String> requests = new HashMap<>();
 
-    private static String host = "localhost";
-    private static int port = 9000;
-
     private Client client;
 
-    private Socket socket;
+    public ResponseEntity<ClientNeighbours> sendPostData(String ip, String sendTo) throws MalformedURLException {
 
-    public ResponseEntity<ClientNeighbours> createClient(String ip, String action, String sendTo) throws MalformedURLException {
-
-        client = new Client(ip, action);
+        client = new Client(ip);
 
         RestTemplate restTemplate = new RestTemplate();
 
         // Data attached to the request.
         HttpEntity<Client> requestBody = new HttpEntity<>(client);
 
+        // Send data to url
         String url = "http://localhost:" + sendTo;
 
         // Send request with POST method.
@@ -47,40 +40,40 @@ public class CreateClient {
         return result;
     }
 
-    public void startAskingClient(String ip, int sendTo) throws IOException {
+    public void startAskingClient(int sendTo) throws IOException {
+        System.out.println("Enter client handler port/ip: ");
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        String ip = br.readLine();
+
         System.out.println("ClientServer Address : " + ip);
 
-
-        try (Socket socket = new Socket(host, sendTo)) {
+        try {
 
             System.out.println("Connected");
 
-            createClient(ip, "Enter", String.valueOf(sendTo));
+            sendPostData(ip, String.valueOf(sendTo));
 
             ArrayList<String> ips = new ArrayList<>(Arrays.asList(clientNeighbours.getIps().split(",")));
             System.out.println(ips);
             Random random = new Random();
             String myport = ips.get(random.nextInt(ips.size()));
-            connectToNeighbour(myport, ip);
 
+            while (true) {
+                connectToNeighbour(myport, ip);
+            }
 
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Socket read Error");
         }
 
         System.out.println("Closing connection");
-
-        // close connection
-//        socket.close();
-
     }
 
 
     public void connectToNeighbour(String connectToPort, String myPort) {
-        try (Socket socket = new Socket(host, Integer.parseInt(connectToPort))) {
+        try {
             System.out.println("Connected with neighbors");
             RestTemplate restTemplate = new RestTemplate();
 
