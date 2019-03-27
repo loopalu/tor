@@ -15,9 +15,8 @@ public class RegisterRunnable implements Runnable{
     protected Socket clientSocket;
     protected String serverText;
 
-    public RegisterRunnable(Socket clientSocket, String serverText) {
+    public RegisterRunnable(Socket clientSocket) {
         this.clientSocket = clientSocket;
-        this.serverText   = serverText;
     }
 
     public void run() {
@@ -96,7 +95,6 @@ public class RegisterRunnable implements Runnable{
             output.close();
             input.close();
             clientSocket = null;
-            serverText = null;
             long time = System.currentTimeMillis();
             System.out.println("Request processed: " + time);
         } catch (IOException e) {

@@ -34,9 +34,10 @@ public class Register implements Runnable {
 
             new Thread(
                     new RegisterRunnable(
-                            clientSocket, "Multithreaded Server")
+                            clientSocket)
             ).start();
         }
+        Timer.stop();
         System.out.println("Server Stopped.");
 
     }

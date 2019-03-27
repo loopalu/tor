@@ -4,24 +4,38 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class Timer implements Runnable{
 
+    private static boolean isRunning = true;
+
+    public static void stop() {
+        isRunning = false;
+    }
+
+
+    //private static AtomicBoolean isRunning = new AtomicBoolean(true);
+
+    //public static void stop() {
+        //isRunning.set(false);
+    //}
+
     //Every 60 seconds activates serviceRemove function
     public void run() {
         try {
-            while (true) {
+            while (isRunning) {
                 serviceRemove();
                 Thread.sleep(300 * 1000);
             }
-        } catch (InterruptedException | IOException e) {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
     //Function to check all the ips in listOfIps and ping them to see if they there, if not deletes them from list
-    private void serviceRemove() throws IOException {
+    private void serviceRemove() {
         String str;
         ArrayList<String> arr = new ArrayList<>(Register.listOfIps);
         System.out.println("Here");
