@@ -2,6 +2,7 @@ package com.tor.clientserver.communication;
 
 import com.tor.clientserver.model.Client;
 import com.tor.clientserver.model.ClientNeighbours;
+import com.tor.clientserver.util.FileWritter;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -11,12 +12,10 @@ import java.util.*;
 
 public class ClientCommunication {
     private ClientNeighbours clientNeighbours;
-    private HashMap<Long, String> requests = new HashMap<>();
 
     private Client client;
 
     public ResponseEntity<ClientNeighbours> sendPostData(String ip, String sendTo) throws MalformedURLException {
-
         client = new Client(ip);
 
         RestTemplate restTemplate = new RestTemplate();
@@ -40,7 +39,7 @@ public class ClientCommunication {
         return result;
     }
 
-    public void startAskingClient(int sendTo) throws IOException {
+    public void startAskingClient(int version, int sendTo) throws IOException {
         System.out.println("Enter client handler port/ip: ");
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
@@ -60,7 +59,7 @@ public class ClientCommunication {
             String myport = ips.get(random.nextInt(ips.size()));
 
             while (true) {
-                connectToNeighbour(myport, ip);
+                connectToNeighbour(version, myport, ip);
             }
 
         } catch (IOException e) {
@@ -72,7 +71,7 @@ public class ClientCommunication {
     }
 
 
-    public void connectToNeighbour(String connectToPort, String myPort) {
+    public void connectToNeighbour(Integer version, String connectToPort, String myPort) {
         try {
             System.out.println("Connected with neighbors");
             RestTemplate restTemplate = new RestTemplate();
@@ -81,7 +80,7 @@ public class ClientCommunication {
 
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-            long id = System.nanoTime();
+            Long id = System.nanoTime();
             System.out.println("Enter message: ");
             System.out.println(id);
             String line = br.readLine();
@@ -90,7 +89,7 @@ public class ClientCommunication {
 
             if (line.length() > 5) {
                 if (line.substring(0, 4).equals("http")) {
-                    requests.put(id, line);
+                    FileWritter.write(version, id, line);
                 }
             }
 
