@@ -1,7 +1,10 @@
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class SenderReceiver implements Runnable {
+    private ArrayList<Long> messages = new ArrayList<>();
 
     protected Socket clientSocket;
 
@@ -38,6 +41,12 @@ public class SenderReceiver implements Runnable {
     }
 
     public void sendForward(BufferedReader in) {
+        try {
+            String information = in.readLine();
+            System.out.println(information);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -50,8 +59,8 @@ public class SenderReceiver implements Runnable {
     }
 
     public boolean getMyRequest() {
-        double rand = Math.random();
+        double lazyness = Math.random();
         double chance = 0.5;
-        return rand <= chance;
+        return lazyness <= chance;
     }
 }
