@@ -74,6 +74,7 @@ public class SenderReceiver implements Runnable {
         System.out.println(lines);
     }
 
+    
     private ArrayList<String> getMessagelines(BufferedReader in) {
         System.out.println("getMessageLines");
         ArrayList<String> messagageLines = new ArrayList<>();
