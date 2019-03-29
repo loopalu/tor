@@ -18,6 +18,8 @@ public class SenderReceiver implements Runnable {
             InputStream input  = clientSocket.getInputStream();
             OutputStream output = clientSocket.getOutputStream();
             BufferedReader in = new BufferedReader(new InputStreamReader(input));
+            String message = "HTTP/1.1 200 OK";
+            output.write(message.getBytes());
             String line;
             line = in.readLine();
             System.out.println("HTTP-HEADER: " + line);
@@ -30,8 +32,7 @@ public class SenderReceiver implements Runnable {
                     sendForward(in);
                 }
             }
-            String message = "HTTP/1.1 200 OK";
-            output.write(message.getBytes());
+
             output.close();
             input.close();
             clientSocket = null;
@@ -40,61 +41,47 @@ public class SenderReceiver implements Runnable {
         }
     }
 
-    public void sendForward(BufferedReader in) {
+    public void sendForward(BufferedReader in) throws IOException {
         System.out.println("sendForward");
-        ArrayList<String> lines = getMessagelines(in);
-        try {
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println(lines);
+        getMessagelines(in);
+
 
     }
 
-    public void sendBack(BufferedReader in) {
+    public void sendBack(BufferedReader in) throws IOException {
         System.out.println("sendBack");
-        ArrayList<String> lines = getMessagelines(in);
-        try {
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println(lines);
+        getMessagelines(in);
     }
 
-    public void download(BufferedReader in) {
+    public void download(BufferedReader in) throws IOException {
         System.out.println("download");
-        ArrayList<String> lines = getMessagelines(in);
-        try {
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println(lines);
+        getMessagelines(in);
     }
 
-    
-    private ArrayList<String> getMessagelines(BufferedReader in) {
-        System.out.println("getMessageLines");
-        ArrayList<String> messagageLines = new ArrayList<>();
-        String inputLine;
-        while (true) {
-            try {
-                inputLine = in.readLine();
-                System.out.println(inputLine);
-                if (inputLine == null) break;
-            } catch (IOException e) {
-                e.printStackTrace();
+
+    private void getMessagelines(BufferedReader in) throws IOException {
+        String line = "";
+
+        // looks for post data
+        int postDataI = -1;
+        while ((line = in.readLine()) != null && (line.length() != 0)) {
+            System.out.println("HTTP-HEADER: " + line);
+            if (line.contains("Content-Length:")) {
+                postDataI = new Integer(
+                        line.substring(
+                                line.indexOf("Content-Length:") + 16,
+                                line.length()));
             }
-        }messagageLines.add(inputLine);
-        System.out.println("done");
-        try {
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        return messagageLines;
+        String postData = null;
+
+        // read the post data
+        if (postDataI > 0) {
+            char[] charArray = new char[postDataI];
+            in.read(charArray, 0, postDataI);
+            postData = new String(charArray);
+        }
+        System.out.println(postData);
     }
 
     public boolean getMyRequest() {
