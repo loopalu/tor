@@ -13,7 +13,6 @@ import java.util.Random;
 public class RegisterRunnable implements Runnable{
 
     protected Socket clientSocket;
-    protected String serverText;
 
     public RegisterRunnable(Socket clientSocket) {
         this.clientSocket = clientSocket;
@@ -60,7 +59,6 @@ public class RegisterRunnable implements Runnable{
                 output.close();
                 input.close();
                 clientSocket = null;
-                serverText = null;
                 return;
             }
 
