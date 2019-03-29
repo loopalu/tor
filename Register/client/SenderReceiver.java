@@ -19,12 +19,12 @@ public class SenderReceiver implements Runnable {
             line = in.readLine();
             System.out.println("HTTP-HEADER: " + line);
             if (line.contains("POST")) {
-                sendBack();
+                sendBack(in);
             } else if (line.contains("GET")) {
                 if (getMyRequest()) {
-                    download();
+                    download(in);
                 } else {
-                    sendForward();
+                    sendForward(in);
                 }
             }
             String message = "HTTP/1.1 200 OK";
@@ -37,15 +37,15 @@ public class SenderReceiver implements Runnable {
         }
     }
 
-    public void sendForward() {
+    public void sendForward(BufferedReader in) {
 
     }
 
-    public void sendBack() {
+    public void sendBack(BufferedReader in) {
 
     }
 
-    public void download() {
+    public void download(BufferedReader in) {
 
     }
 

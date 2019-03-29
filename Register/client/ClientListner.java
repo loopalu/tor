@@ -28,7 +28,6 @@ public class ClientListner implements Runnable {
                 throw new RuntimeException(
                         "Error accepting client connection", e);
             }
-
             new Thread(
                     new SenderReceiver(
                             clientSocket)
