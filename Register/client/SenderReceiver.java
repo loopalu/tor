@@ -1,7 +1,9 @@
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.Socket;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class SenderReceiver implements Runnable {
     private ArrayList<Long> messages = new ArrayList<>();
@@ -43,9 +45,11 @@ public class SenderReceiver implements Runnable {
 
     public void sendForward(BufferedReader in) throws IOException {
         System.out.println("sendForward");
-        getMessagelines(in);
-
-
+        URL url = new URL("http://localhost:8000");
+        URLConnection con = url.openConnection();
+        HttpURLConnection http = (HttpURLConnection)con;
+        http.setRequestMethod("GET"); // PUT is another valid option
+        http.setDoOutput(true);
     }
 
     public void sendBack(BufferedReader in) throws IOException {
@@ -81,6 +85,7 @@ public class SenderReceiver implements Runnable {
             in.read(charArray, 0, postDataI);
             postData = new String(charArray);
         }
+        System.out.println("done");
         System.out.println(postData);
     }
 
