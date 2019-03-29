@@ -3,19 +3,19 @@ import java.util.Scanner;
 
 public class Client implements Runnable{
 
-    public boolean isRunning = false;
-    public HashMap requests = new HashMap();
+    public boolean isRunning;
 
     public Client() {
-        isRunning = true;
+        this.isRunning = true;
     }
 
     public void run() {
+
         while (isRunning) {
             Scanner reader = new Scanner(System.in);
             System.out.println("Enter page: ");
             String url = reader.nextLine();
-            
+
 
         }
     }
@@ -23,6 +23,13 @@ public class Client implements Runnable{
         this.isRunning = false;
     }
 
+    public synchronized void suspend() {
+        this.isRunning = false;
+    }
+
+    public synchronized void resume() {
+        this.isRunning = true;
+    }
 
 
 }
