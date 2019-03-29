@@ -41,21 +41,59 @@ public class SenderReceiver implements Runnable {
     }
 
     public void sendForward(BufferedReader in) {
+        System.out.println("sendForward");
+        ArrayList<String> lines = getMessagelines(in);
         try {
-            String information = in.readLine();
-            System.out.println(information);
+            in.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println(lines);
 
     }
 
     public void sendBack(BufferedReader in) {
-
+        System.out.println("sendBack");
+        ArrayList<String> lines = getMessagelines(in);
+        try {
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println(lines);
     }
 
     public void download(BufferedReader in) {
+        System.out.println("download");
+        ArrayList<String> lines = getMessagelines(in);
+        try {
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println(lines);
+    }
 
+    private ArrayList<String> getMessagelines(BufferedReader in) {
+        System.out.println("getMessageLines");
+        ArrayList<String> messagageLines = new ArrayList<>();
+        String inputLine;
+        while (true) {
+            try {
+                inputLine = in.readLine();
+                System.out.println(inputLine);
+                if (inputLine == null) break;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }messagageLines.add(inputLine);
+        System.out.println("done");
+        try {
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return messagageLines;
     }
 
     public boolean getMyRequest() {
