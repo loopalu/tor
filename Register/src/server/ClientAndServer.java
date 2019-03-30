@@ -1,6 +1,7 @@
+package server;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -18,9 +19,8 @@ public class ClientAndServer implements Runnable {
     }
 
     public void run() {
-        if (prev.equals("")) {
-            
-        }
+        Client client = new Client();
+        Register register = new Register(myIp);
         while (isRunning) {
             try {
                 URL urlServer = new URL("http://localhost:9000");
@@ -37,6 +37,7 @@ public class ClientAndServer implements Runnable {
             }
             if (!(prev.equals(acting))){
                 if (acting.equals("Client")) {
+                    
                 } else {
 
                 }

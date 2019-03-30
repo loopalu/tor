@@ -1,6 +1,6 @@
+package server;
 
-
-public class main {
+public class main1 {
 
     public static void main(String[] args) {
         ClientListner server = new ClientListner(9000);
