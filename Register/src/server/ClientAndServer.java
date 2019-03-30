@@ -28,19 +28,19 @@ public class ClientAndServer implements Runnable {
 
     public void run() {
         Client client = new Client();
-        Register register = new Register(myIp);
+        Register register = new Register(9000);
         while (isRunning) {
             try {
                 URL urlServer = new URL("http://localhost:9000");
                 HttpURLConnection urlConn = (HttpURLConnection) urlServer.openConnection();
                 urlConn.connect();
+                System.out.println("Here");
                 if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     acting = "Client";
                 } else {
                     acting = "Server";
                 }
             } catch (IOException e) {
-                e.printStackTrace();
                 acting = "Server";
             }
             if (!(prev.equals(acting))){
@@ -69,8 +69,6 @@ public class ClientAndServer implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
-
         }
     }
 
