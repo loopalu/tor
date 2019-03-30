@@ -12,11 +12,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
-public class GetNeighbors implements Runnable {
+public class GetNeighbors {
     public static String myIp = "7000";
     public static ArrayList<String> neighborgIps = new ArrayList<>();
 
-    public void run() {
+
+    public static void main(String[] args) {
         try {
             while (true) {
                 makeRequestToServer();
@@ -41,23 +42,5 @@ public class GetNeighbors implements Runnable {
 
         Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
 
-        StringBuilder str = new StringBuilder();
-        for (int c; (c = in.read()) >= 0;) {
-            System.out.print((char)c);
-            str.append((char)c);
-        }
-        String answer = str.toString();
-        JSONParser parser = new JSONParser();
-        JSONObject parsed = null;
-        try {
-            parsed = (JSONObject)parser.parse(answer);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        String ips = (String) parsed.get("ips");
-        if (ips != null) {
-            String[] arr = ips.split(",");
-            neighborgIps.addAll(Arrays.asList(arr));
-        }
     }
 }
