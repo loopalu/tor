@@ -40,9 +40,14 @@ public class SenderReceiver implements Runnable {
 
             output.close();
             input.close();
-            clientSocket = null;
+            clientSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
+            try {
+                clientSocket.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
         }
     }
 

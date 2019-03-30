@@ -58,7 +58,7 @@ public class RegisterRunnable implements Runnable{
                 output.write(message.getBytes());
                 output.close();
                 input.close();
-                clientSocket = null;
+                clientSocket.close();
                 return;
             }
 
@@ -92,12 +92,17 @@ public class RegisterRunnable implements Runnable{
             output.write(message.getBytes());
             output.close();
             input.close();
-            clientSocket = null;
+            clientSocket.close();
             long time = System.currentTimeMillis();
             System.out.println("Request processed: " + time);
         } catch (IOException e) {
             //report exception somewhere.
             e.printStackTrace();
+            try {
+                clientSocket.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
         }
     }
 
