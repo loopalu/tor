@@ -48,13 +48,14 @@ public class SenderReceiver implements Runnable {
 
     public void sendForward(BufferedReader in) throws IOException {
         long id = System.nanoTime();
-        System.out.println("sendForward");
+        System.out.println("ASD");
         URL url = new URL("http://localhost:8000");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
-        conn.setRequestProperty("Data", "message ");
-        conn.setRequestProperty("ID", String.valueOf(id));
+        conn.setRequestProperty("Content-Type", "text/plain");
         conn.setDoOutput(true);
+
+        Reader inasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
     }
 
     public void sendBack(BufferedReader in) throws IOException {
@@ -62,10 +63,11 @@ public class SenderReceiver implements Runnable {
         System.out.println("sendForward");
         URL url = new URL("http://localhost:8000");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("Data", "message ");
-        conn.setRequestProperty("ID", String.valueOf(id));
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty("Content-Type", "text/plain");
         conn.setDoOutput(true);
+
+        Reader inasdasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
     }
 
     public void download(BufferedReader in) throws IOException {

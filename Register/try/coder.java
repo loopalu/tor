@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -12,19 +13,7 @@ public class coder {
     public static ArrayList<String> neighborgIps = new ArrayList<>();
 
 
-    public static void main(String[] args) {
-        try {
-            while (true) {
-                makeRequestToServer();
-                Thread.sleep(60 * 1000);
-            }
-        } catch (InterruptedException | IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public static void makeRequestToServer() throws IOException {
+    public static void main(String[] args) throws IOException {
         URL url = new URL("http://localhost:9000");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
