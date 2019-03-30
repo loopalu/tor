@@ -7,6 +7,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class SenderReceiver implements Runnable {
@@ -30,9 +31,9 @@ public class SenderReceiver implements Runnable {
             line = in.readLine();
             System.out.println("HTTP-HEADER: " + line);
             if (line.contains("POST")) {
-                sendBack(in);
+                sendBack(in, output);
             } else if (line.contains("GET")) {
-                sendForward(in);
+                sendForward(in, output);
 //                if (getMyRequest()) {
 //                    download(in);
 //                } else {
@@ -53,26 +54,39 @@ public class SenderReceiver implements Runnable {
         }
     }
 
-    public void sendForward(BufferedReader in) throws IOException {
+    public void sendForward(BufferedReader in, OutputStream output) throws IOException {
         System.out.println("ASD");
-        URL url = new URL("http://localhost:6000");
+        URL url = new URL("http://localhost:8500");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Content-Type", "text/plain");
         conn.setDoOutput(true);
+        String answer = "HTTP/1.1 200 OK\r\n" +
+                "Content-Type: text/html\r\n" +
+                "\r\n" +
+                "No data was sent";
+        output.write(answer.getBytes());
+        output.close();
 
-        Reader inasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+        Reader inasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
     }
 
-    public void sendBack(BufferedReader in) throws IOException {
+    public void sendBack(BufferedReader in, OutputStream output) throws IOException {
         System.out.println("sendForward");
         URL url = new URL("http://localhost:8000");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
+        conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "text/plain");
         conn.setDoOutput(true);
 
-        Reader inasdasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+        String answer = "HTTP/1.1 200 OK\r\n" +
+                "Content-Type: text/html\r\n" +
+                "\r\n" +
+                "No data was sent";
+        output.write(answer.getBytes());
+        output.close();
+
+        Reader inasdasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
     }
 
     public void download(BufferedReader in) throws IOException {

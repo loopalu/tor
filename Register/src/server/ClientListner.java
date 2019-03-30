@@ -43,7 +43,7 @@ public class ClientListner implements Runnable {
 
     private void openServerSocket() {
         try {
-            this.serverSocket = new ServerSocket(this.port);
+            this.serverSocket = new ServerSocket(this.port, 20);
         } catch (IOException e) {
             throw new RuntimeException("Cannot open port 9000", e);
         }
