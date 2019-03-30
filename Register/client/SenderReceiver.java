@@ -3,6 +3,8 @@ import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 
 public class SenderReceiver implements Runnable {
@@ -28,11 +30,12 @@ public class SenderReceiver implements Runnable {
             if (line.contains("POST")) {
                 sendBack(in);
             } else if (line.contains("GET")) {
-                if (getMyRequest()) {
-                    download(in);
-                } else {
-                    sendForward(in);
-                }
+                sendForward(in);
+//                if (getMyRequest()) {
+//                    download(in);
+//                } else {
+//                    sendForward(in);
+//                }
             }
 
             output.close();
@@ -44,22 +47,32 @@ public class SenderReceiver implements Runnable {
     }
 
     public void sendForward(BufferedReader in) throws IOException {
+        long id = System.nanoTime();
         System.out.println("sendForward");
         URL url = new URL("http://localhost:8000");
-        URLConnection con = url.openConnection();
-        HttpURLConnection http = (HttpURLConnection)con;
-        http.setRequestMethod("GET"); // PUT is another valid option
-        http.setDoOutput(true);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty("Data", "message ");
+        conn.setRequestProperty("ID", String.valueOf(id));
+        conn.setDoOutput(true);
     }
 
     public void sendBack(BufferedReader in) throws IOException {
-        System.out.println("sendBack");
-        getMessagelines(in);
+        long id = System.nanoTime();
+        System.out.println("sendForward");
+        URL url = new URL("http://localhost:8000");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Data", "message ");
+        conn.setRequestProperty("ID", String.valueOf(id));
+        conn.setDoOutput(true);
     }
 
     public void download(BufferedReader in) throws IOException {
-        System.out.println("download");
-        getMessagelines(in);
+        URL website = new URL("http://pm1.narvii.com/6311/3d4ff752b939276f48975c010a0e3de1ef116d99_00.jpg");
+        ReadableByteChannel byteChannel = Channels.newChannel(website.openStream());
+        FileOutputStream outputStream = new FileOutputStream("chika.jpg");
+        outputStream.getChannel().transferFrom(byteChannel, 0, Long.MAX_VALUE);
     }
 
 
