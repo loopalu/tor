@@ -17,9 +17,7 @@ public class coder {
         URL url = new URL("http://localhost:9000");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
-        String body = "{\"ip\":\"" + myIp + "\",\"action\":\"Enter\"}";
         conn.setRequestProperty("Content-Type", "text/plain");
-        conn.setRequestProperty("Content-Length", Integer.toString(body.length()));
         conn.setDoOutput(true);
 
         Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));

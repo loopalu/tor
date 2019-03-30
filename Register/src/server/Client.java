@@ -6,7 +6,6 @@ import java.util.Scanner;
 public class Client implements Runnable{
 
     public boolean isRunning;
-    public ArrayList<String> neighbors = new ArrayList<>();
 
     public Client() {
         this.isRunning = true;
@@ -18,9 +17,10 @@ public class Client implements Runnable{
             Scanner reader = new Scanner(System.in);
             System.out.println("Enter page: ");
             String urlString = reader.nextLine();
-            if (neighbors.size() >= 2){
+            if (ClientAndServer.getNeighbours().size() >= 2){
                 for (String i : ClientAndServer.getNeighbours()) {
                     String url = "http://localhost:" + ClientAndServer.getMyIp();
+                    System.out.println(i);
                 }
             } else {
                 System.out.println("Pole piisavalt naabreid!");

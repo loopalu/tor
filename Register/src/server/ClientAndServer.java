@@ -30,18 +30,20 @@ public class ClientAndServer implements Runnable {
         Client client = new Client();
         Register register = new Register(9000);
         while (isRunning) {
-            try {
-                URL urlServer = new URL("http://localhost:9000");
-                HttpURLConnection urlConn = (HttpURLConnection) urlServer.openConnection();
-                urlConn.connect();
-                System.out.println("Here");
-                if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                    acting = "Client";
-                } else {
+            if (!(prev.equals("Server"))) {
+                try {
+                    URL urlServer = new URL("http://localhost:9000");
+                    HttpURLConnection urlConn = (HttpURLConnection) urlServer.openConnection();
+                    urlConn.connect();
+                    System.out.println("Here");
+                    if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        acting = "Client";
+                    } else {
+                        acting = "Server";
+                    }
+                } catch (IOException e) {
                     acting = "Server";
                 }
-            } catch (IOException e) {
-                acting = "Server";
             }
             if (!(prev.equals(acting))){
                 if (acting.equals("Client")) {
@@ -80,7 +82,7 @@ public class ClientAndServer implements Runnable {
         URL url = new URL("http://localhost:9000");
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         conn.setRequestMethod("POST");
-        String body = "{\"ip\":\"" + "8000" + "\",\"action\":\"Enter\"}";
+        String body = "{\"ip\":\"" + myIp + "\",\"action\":\"Enter\"}";
         conn.setRequestProperty("Content-Type", "text/plain");
         conn.setRequestProperty("Content-Length", Integer.toString(body.length()));
         conn.setDoOutput(true);
