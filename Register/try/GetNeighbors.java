@@ -34,7 +34,6 @@ public class GetNeighbors {
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         conn.setRequestMethod("POST");
         String body = "{\"ip\":\"" + myIp + "\",\"action\":\"Enter\"}";
-        conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "text/plain");
         conn.setRequestProperty("Content-Length", Integer.toString(body.length()));
         conn.setDoOutput(true);
