@@ -19,7 +19,7 @@ public class Client implements Runnable{
             System.out.println("Enter page: ");
             String urlString = reader.nextLine();
             if (neighbors.size() >= 2){
-                for (String i : ClientAndServer.getNeigbors()) {
+                for (String i : ClientAndServer.getNeighbours()) {
                     String url = "http://localhost:" + ClientAndServer.getMyIp();
                 }
             } else {
