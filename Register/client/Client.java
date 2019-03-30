@@ -1,9 +1,10 @@
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Client implements Runnable{
 
     public boolean isRunning;
+    public ArrayList<String> neighbors = new ArrayList<>();
 
     public Client() {
         this.isRunning = true;
@@ -14,11 +15,17 @@ public class Client implements Runnable{
         while (isRunning) {
             Scanner reader = new Scanner(System.in);
             System.out.println("Enter page: ");
-            String url = reader.nextLine();
-
-
+            String urlString = reader.nextLine();
+            if (neighbors.size() >= 2){
+                for (String i : ClientAndServer.getNeigbors()) {
+                    String url = "http://localhost:" + ClientAndServer.getMyIp();
+                }
+            } else {
+                System.out.println("Pole piisavalt naabreid!");
+            }
         }
     }
+
     public synchronized void stop() {
         this.isRunning = false;
     }

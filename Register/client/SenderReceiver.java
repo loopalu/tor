@@ -52,9 +52,8 @@ public class SenderReceiver implements Runnable {
     }
 
     public void sendForward(BufferedReader in) throws IOException {
-        long id = System.nanoTime();
         System.out.println("ASD");
-        URL url = new URL("http://localhost:8000");
+        URL url = new URL("http://localhost:6000");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Content-Type", "text/plain");
@@ -64,7 +63,6 @@ public class SenderReceiver implements Runnable {
     }
 
     public void sendBack(BufferedReader in) throws IOException {
-        long id = System.nanoTime();
         System.out.println("sendForward");
         URL url = new URL("http://localhost:8000");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
