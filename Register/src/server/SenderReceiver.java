@@ -25,25 +25,11 @@ public class SenderReceiver implements Runnable {
             InputStream input  = clientSocket.getInputStream();
             OutputStream output = clientSocket.getOutputStream();
             BufferedReader in = new BufferedReader(new InputStreamReader(input));
+            new Thread(new SendingThread(in)).start();
             String message = "HTTP/1.1 200 OK";
             output.write(message.getBytes());
-            String line;
-            line = in.readLine();
-            System.out.println("HTTP-HEADER: " + line);
-            if (line.contains("POST")) {
-                sendBack(in, output);
-            } else if (line.contains("GET")) {
-                sendForward(in, output);
-//                if (getMyRequest()) {
-//                    download(in);
-//                } else {
-//                    sendForward(in);
-//                }
-            }
-
             output.close();
             input.close();
-            clientSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
             try {
@@ -52,80 +38,5 @@ public class SenderReceiver implements Runnable {
                 e1.printStackTrace();
             }
         }
-    }
-
-    public void sendForward(BufferedReader in, OutputStream output) throws IOException {
-        System.out.println("ASD");
-        URL url = new URL("http://localhost:8500");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty("Content-Type", "text/plain");
-        conn.setDoOutput(true);
-        String answer = "HTTP/1.1 200 OK\r\n" +
-                "Content-Type: text/html\r\n" +
-                "\r\n" +
-                "No data was sent";
-        output.write(answer.getBytes());
-        output.close();
-
-        Reader inasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-    }
-
-    public void sendBack(BufferedReader in, OutputStream output) throws IOException {
-        System.out.println("sendForward");
-        URL url = new URL("http://localhost:8000");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-Type", "text/plain");
-        conn.setDoOutput(true);
-
-        String answer = "HTTP/1.1 200 OK\r\n" +
-                "Content-Type: text/html\r\n" +
-                "\r\n" +
-                "No data was sent";
-        output.write(answer.getBytes());
-        output.close();
-
-        Reader inasdasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-    }
-
-    public void download(BufferedReader in) throws IOException {
-        URL website = new URL("http://pm1.narvii.com/6311/3d4ff752b939276f48975c010a0e3de1ef116d99_00.jpg");
-        ReadableByteChannel byteChannel = Channels.newChannel(website.openStream());
-        FileOutputStream outputStream = new FileOutputStream("chika.jpg");
-        outputStream.getChannel().transferFrom(byteChannel, 0, Long.MAX_VALUE);
-    }
-
-
-    private void getMessagelines(BufferedReader in) throws IOException {
-        String line = "";
-
-        // looks for post data
-        int postDataI = -1;
-        while ((line = in.readLine()) != null && (line.length() != 0)) {
-            System.out.println("HTTP-HEADER: " + line);
-            if (line.contains("Content-Length:")) {
-                postDataI = new Integer(
-                        line.substring(
-                                line.indexOf("Content-Length:") + 16,
-                                line.length()));
-            }
-        }
-        String postData = null;
-
-        // read the post data
-        if (postDataI > 0) {
-            char[] charArray = new char[postDataI];
-            in.read(charArray, 0, postDataI);
-            postData = new String(charArray);
-        }
-        System.out.println("done");
-        System.out.println(postData);
-    }
-
-    public boolean getMyRequest() {
-        double lazyness = Math.random();
-        double chance = 0.5;
-        return lazyness <= chance;
     }
 }
