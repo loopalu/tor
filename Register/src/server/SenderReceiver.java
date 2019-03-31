@@ -13,10 +13,10 @@ import java.util.ArrayList;
 public class SenderReceiver implements Runnable {
     private ArrayList<Long> messages = new ArrayList<>();
 
-    protected Socket clientSocket;
+    private Socket clientSocket;
 
 
-    public SenderReceiver(Socket clientSocket) {
+    SenderReceiver(Socket clientSocket) {
         this.clientSocket = clientSocket;
     }
 
@@ -25,6 +25,7 @@ public class SenderReceiver implements Runnable {
             InputStream input  = clientSocket.getInputStream();
             OutputStream output = clientSocket.getOutputStream();
             BufferedReader in = new BufferedReader(new InputStreamReader(input));
+            System.out.println(in == null);
             new Thread(new SendingThread(in)).start();
             String message = "HTTP/1.1 200 OK";
             output.write(message.getBytes());

@@ -12,20 +12,25 @@ import java.nio.charset.StandardCharsets;
 public class SendingThread implements Runnable {
 
     private BufferedReader in;
+    private String line;
 
     public SendingThread(BufferedReader input) {
+        System.out.println(input==null);
         this.in = input;
     }
 
     public void run() {
         
-        String line = null;
         try {
-            line = in.readLine();
+            System.out.println(in == null);
+            System.out.println(in.readLine() == null);
+            this.line = in.readLine();
+            System.out.println("Line "+line);
         } catch (IOException e) {
             e.printStackTrace();
         }
         System.out.println("HTTP-HEADER: " + line);
+        assert line != null;
         if (line.contains("POST")) {
             try {
                 sendBack(in);
@@ -47,25 +52,27 @@ public class SendingThread implements Runnable {
     }
 
     public void sendForward(BufferedReader in) throws IOException {
-        System.out.println("ASD");
-        URL url = new URL("http://localhost:8500");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty("Content-Type", "text/plain");
-        conn.setDoOutput(true);
-
-        Reader inasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+        getMessagelines(in);
+//        System.out.println("ASD");
+//        URL url = new URL("http://localhost:8500");
+//        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//        conn.setRequestMethod("GET");
+//        conn.setRequestProperty("Content-Type", "text/plain");
+//        conn.setDoOutput(true);
+//
+//        Reader inasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
     }
 
     public void sendBack(BufferedReader in) throws IOException {
-        System.out.println("sendForward");
-        URL url = new URL("http://localhost:8000");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-Type", "text/plain");
-        conn.setDoOutput(true);
-
-        Reader inasdasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+        getMessagelines(in);
+//        System.out.println("sendForward");
+//        URL url = new URL("http://localhost:8000");
+//        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//        conn.setRequestMethod("POST");
+//        conn.setRequestProperty("Content-Type", "text/plain");
+//        conn.setDoOutput(true);
+//
+//        Reader inasdasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
     }
 
     public void download(BufferedReader in) throws IOException {

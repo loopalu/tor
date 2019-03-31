@@ -29,10 +29,7 @@ public class ClientListner implements Runnable {
                 throw new RuntimeException(
                         "Error accepting client connection", e);
             }
-            new Thread(
-                    new SenderReceiver(
-                            clientSocket)
-            ).start();
+            new Thread(new SenderReceiver(clientSocket)).start();
         }
         System.out.println("Server Stopped.");
     }
