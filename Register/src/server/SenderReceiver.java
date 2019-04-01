@@ -47,6 +47,7 @@ public class SenderReceiver implements Runnable {
             }
             System.out.println(postData);
             System.out.println(httpText);
+            new Thread(new SendingThread(httpText, postData)).start();
             String message = "HTTP/1.1 200 OK";
             output.write(message.getBytes());
             output.close();
