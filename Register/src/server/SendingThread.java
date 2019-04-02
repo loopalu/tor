@@ -7,14 +7,17 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 //new Thread(new SendingThread(in)).start();
 public class SendingThread implements Runnable {
 
+    private ArrayList<String> neighbors = new ArrayList<>(Arrays.asList("7500", "8000", "8500"));
     private ArrayList<String> httpText;
     private String postData;
     private double lazyness;
+    private String getData;
 
     public SendingThread(ArrayList<String> httpText, String postData) {
         this.httpText = httpText;
@@ -49,9 +52,15 @@ public class SendingThread implements Runnable {
     }
 
     public void sendForward() throws IOException {
+        System.out.println(neighbors);
         System.out.println("GET - forward");
         System.out.println("Lazyness: "+ lazyness);
-        System.out.println(httpText.get(6));
+        for (String string : httpText) {
+            if (string.contains("veebiaadress")) {
+                this.getData = string;
+            }
+        }
+        System.out.println(getData);
 //        URL url = new URL("http://localhost:8500");
 //        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 //        conn.setRequestMethod("GET");
