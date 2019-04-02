@@ -3,7 +3,7 @@ package server;
 public class main1 {
 
     public static void main(String[] args) {
-        ClientListner server = new ClientListner(8000);
+        ClientListener server = new ClientListener(8000);
         new Thread(server).start();
 
         try {

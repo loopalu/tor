@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class ClientListner implements Runnable {
+public class ClientListener implements Runnable {
 
     private int port;
     private boolean isRunning = true;
     public ServerSocket serverSocket;
 
-    public ClientListner(int port) {
+    public ClientListener(int port) {
         this.port = port;
     }
 
