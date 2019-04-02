@@ -14,33 +14,44 @@ public class SendingThread implements Runnable {
 
     private ArrayList<String> httpText;
     private String postData;
+    private double lazyness;
 
     public SendingThread(ArrayList<String> httpText, String postData) {
+        this.httpText = httpText;
+        this.postData = postData;
     }
 
     public void run() {
-//        if (line.contains("POST")) {
-//            try {
-//                sendBack(in);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        } else if (line.contains("GET")) {
-//            try {
-//                sendForward(in);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//                if (getMyRequest()) {
-//                    download(in);
-//                } else {
-//                    sendForward(in);
-//                }
-//        }
+        //System.out.println(httpText);
+        //System.out.println(postData);
+        String requestMethod = httpText.get(1);
+        if (requestMethod.contains("POST")) {
+            try {
+                sendBack();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else if (requestMethod.contains("GET")) {
+            if (getMyRequest()) {
+                try {
+                    download();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    sendForward();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
-    public void sendForward(BufferedReader in) throws IOException {
-//        System.out.println("ASD");
+    public void sendForward() throws IOException {
+        System.out.println("GET - forward");
+        System.out.println("Lazyness: "+ lazyness);
+        System.out.println(httpText.get(6));
 //        URL url = new URL("http://localhost:8500");
 //        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 //        conn.setRequestMethod("GET");
@@ -51,7 +62,7 @@ public class SendingThread implements Runnable {
     }
 
     public void sendBack() throws IOException {
-//        System.out.println("sendForward");
+        System.out.println("POST - back");
 //        URL url = new URL("http://localhost:8000");
 //        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 //        conn.setRequestMethod("POST");
@@ -62,14 +73,16 @@ public class SendingThread implements Runnable {
     }
 
     public void download() throws IOException {
-        URL website = new URL("http://pm1.narvii.com/6311/3d4ff752b939276f48975c010a0e3de1ef116d99_00.jpg");
-        ReadableByteChannel byteChannel = Channels.newChannel(website.openStream());
-        FileOutputStream outputStream = new FileOutputStream("chika.jpg");
-        outputStream.getChannel().transferFrom(byteChannel, 0, Long.MAX_VALUE);
+        System.out.println("GET - download");
+        System.out.println("Lazyness: "+ lazyness);
+//        URL website = new URL("http://pm1.narvii.com/6311/3d4ff752b939276f48975c010a0e3de1ef116d99_00.jpg");
+//        ReadableByteChannel byteChannel = Channels.newChannel(website.openStream());
+//        FileOutputStream outputStream = new FileOutputStream("chika.jpg");
+//        outputStream.getChannel().transferFrom(byteChannel, 0, Long.MAX_VALUE);
     }
 
     public boolean getMyRequest() {
-        double lazyness = Math.random();
+        lazyness = Math.random();
         double chance = 0.5;
         return lazyness <= chance;
     }
