@@ -28,6 +28,7 @@ public class ClientAndServer implements Runnable {
 
     public void run() {
         Client client = new Client();
+        ClientListener clientListener = new ClientListener(myIp);
         Register register = new Register(9000);
         while (isRunning) {
             if (!(prev.equals("Server"))) {
@@ -51,9 +52,11 @@ public class ClientAndServer implements Runnable {
                         register.stop();
                     }
                     new Thread(client).start();
+                    new Thread(clientListener).start();
                 } else {
                     if (!(prev.equals(""))) {
                         client.stop();
+                        clientListener.stop();
                     }
                     new Thread(register).start();
                 }

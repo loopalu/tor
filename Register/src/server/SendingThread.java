@@ -80,7 +80,7 @@ public class SendingThread implements Runnable {
         }
         System.out.println(getData);
         System.out.println(messageId);
-        for (String neighbor : neighbors) {
+        for (String neighbor : ClientAndServer.getNeighbours()) {
             URL url = new URL("http://localhost:"+neighbor);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
@@ -101,7 +101,7 @@ public class SendingThread implements Runnable {
         timeToLive = package1.getTimetolive() - 1;
         package1.setTimetolive(timeToLive);
         String forward = mapper1.writeValueAsString(package1);
-        for (String neighbor : neighbors) {
+        for (String neighbor : ClientAndServer.getNeighbours()) {
             URL url = new URL("http://localhost:"+neighbor);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");

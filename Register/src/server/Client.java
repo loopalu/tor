@@ -15,6 +15,7 @@ import java.util.Scanner;
 public class Client implements Runnable{
 
     public boolean isRunning;
+    public ArrayList<String> myRequests = new ArrayList<>();
 
     public Client() {
         this.isRunning = true;
@@ -26,42 +27,25 @@ public class Client implements Runnable{
             Scanner reader = new Scanner(System.in);
             System.out.println("Enter page: ");
             String urlString = reader.nextLine();
+            String time = String.valueOf(System.currentTimeMillis());
+            myRequests.add(time);
             if (ClientAndServer.getNeighbours().size() >= 2){
                 for (String i : ClientAndServer.getNeighbours()) {
-                    String address = "http://localhost:" + ClientAndServer.getMyIp();
-
-                    // Aivari tehtud asi, mis ei tööta.
-//                    URL url = null;
-//                    try {
-//                        url = new URL(address);
-//                    } catch (MalformedURLException e) {
-//                        e.printStackTrace();
-//                    }
-//                    HttpURLConnection conn = null;
-//                    try {
-//                        assert url != null;
-//                        conn = (HttpURLConnection) url.openConnection();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                    try {
-//                        assert conn != null;
-//                        conn.setRequestMethod("GET");
-//                    } catch (ProtocolException e) {
-//                        e.printStackTrace();
-//                    }
-//                    conn.setRequestProperty("Content-Type", "text/plain");
-//                    conn.setRequestProperty("Url", urlString);
-//                    conn.setDoOutput(true);
-//
-//                    try {
-//                        Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-
-
-                    System.out.println(i);
+                    try {
+                        System.out.println(i);
+                        URL url = new URL("http://localhost:"+i);
+                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                        conn.setRequestMethod("GET");
+                        conn.setRequestProperty("Content-Type", "text/plain");
+                        conn.setRequestProperty("veebiaadress", urlString);
+                        conn.setRequestProperty("messageid",time);
+                        conn.setRequestProperty("timetolive", String.valueOf(10));
+                        conn.setDoOutput(true);
+                        Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+                        in.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             } else {
                 System.out.println("Pole piisavalt naabreid!");
@@ -73,13 +57,7 @@ public class Client implements Runnable{
         this.isRunning = false;
     }
 
-    public synchronized void suspend() {
-        this.isRunning = false;
+    public ArrayList<String> getMyRequests() {
+        return myRequests;
     }
-
-    public synchronized void resume() {
-        this.isRunning = true;
-    }
-
-
 }
