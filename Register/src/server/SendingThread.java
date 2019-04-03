@@ -1,16 +1,18 @@
 package server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 
-import java.io.BufferedReader;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 
 
 //new Thread(new SendingThread(in)).start();
@@ -24,6 +26,7 @@ public class SendingThread implements Runnable {
     private String requestMethod;
     private String fileType;
     private String messageId;
+    private Integer timeToLive;
 
     public SendingThread(ArrayList<String> httpText, String postData) {
         this.httpText = httpText;
@@ -71,6 +74,9 @@ public class SendingThread implements Runnable {
             if (string.contains("messageid")) {
                 this.messageId = string.substring(11);
             }
+            if (string.contains("timetolive")) {
+                this.timeToLive = Integer.valueOf(string.substring(12));
+            }
         }
         System.out.println(getData);
         System.out.println(messageId);
@@ -81,33 +87,31 @@ public class SendingThread implements Runnable {
             conn.setRequestProperty("Content-Type", "text/plain");
             conn.setRequestProperty("veebiaadress", getData);
             conn.setRequestProperty("messageid",messageId);
+            conn.setRequestProperty("timetolive", String.valueOf(timeToLive-1));
             conn.setDoOutput(true);
+            //Reader inasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
         }
-
-
-//
-//        Reader inasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
     }
 
     public void sendBack() throws IOException {
         System.out.println("POST - back");
         System.out.println(httpText);
-        System.out.println(postData);
-
-//        ObjectMapper mapper1 = new ObjectMapper();
-//        PostPackage package1 = mapper1.readValue(postData, PostPackage.class);
-//        System.out.println(package1.getContent());
-//        for (String neighbor : neighbors) {
-//            URL url = new URL("http://localhost:"+neighbor);
-//            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//            conn.setRequestMethod("POST");
-//            conn.setRequestProperty("Content-Type", "text/plain"); // ALATI EI SAA OLLA TEXT !!!!!
-//            //SIIA TULEB BODY LISAMINE !!!!!!!
-//            conn.setDoOutput(true);
-//        }
-
-//
-//        Reader inasdasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+        ObjectMapper mapper1 = new ObjectMapper();
+        PostPackage package1 = mapper1.readValue(postData, PostPackage.class);
+        timeToLive = package1.getTimetolive() - 1;
+        package1.setTimetolive(timeToLive);
+        String forward = mapper1.writeValueAsString(package1);
+        for (String neighbor : neighbors) {
+            URL url = new URL("http://localhost:"+neighbor);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            OutputStream outputStream = conn.getOutputStream();
+            outputStream.write(forward.getBytes());
+            outputStream.close();
+            conn.setDoOutput(true);
+            //Reader inasdasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+        }
     }
 
     public void download() throws IOException {
@@ -268,13 +272,29 @@ public class SendingThread implements Runnable {
         }
         URL website = new URL(getData);
         ReadableByteChannel byteChannel = Channels.newChannel(website.openStream());
-        FileOutputStream outputStream = new FileOutputStream("temporary."+fileType);
+        String fileName = "temporary." + fileType;
+        FileOutputStream outputStream = new FileOutputStream(fileName);
         outputStream.getChannel().transferFrom(byteChannel, 0, Long.MAX_VALUE);
-        //VAJA TEHA TAGASI SAATMINE !!!!!!!!!
-//        URL website = new URL("http://pm1.narvii.com/6311/3d4ff752b939276f48975c010a0e3de1ef116d99_00.jpg");
-//        ReadableByteChannel byteChannel = Channels.newChannel(website.openStream());
-//        FileOutputStream outputStream = new FileOutputStream("chika.jpg");
-//        outputStream.getChannel().transferFrom(byteChannel, 0, Long.MAX_VALUE);
+        outputStream.close();
+
+        File inputFile = new File(fileName);
+
+        byte[] fileContent = FileUtils.readFileToByteArray(inputFile);
+        String encodedString = Base64
+                .getEncoder()
+                .encodeToString(fileContent);
+
+        // decode the string and write to file
+        byte[] decodedBytes = Base64
+                .getDecoder()
+                .decode(encodedString);
+
+        // create output file
+        FileOutputStream outputStream2 = new FileOutputStream("new."+fileType);
+        outputStream2.write(decodedBytes);
+        outputStream2.close();
+
+        //VAJA TEHA FAILI TAGASI SAATMINE!!!!!
     }
 
     public boolean getMyRequest() {
