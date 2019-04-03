@@ -1,5 +1,7 @@
 package server;
 
+import util.FileWritter;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,11 +16,12 @@ import java.util.Scanner;
 
 public class Client implements Runnable{
 
-    public boolean isRunning;
-    public ArrayList<String> myRequests = new ArrayList<>();
+    private boolean isRunning;
+    private Integer ip;
 
-    public Client() {
+    Client(int myIp) {
         this.isRunning = true;
+        this.ip = myIp;
     }
 
     public void run() {
@@ -28,7 +31,11 @@ public class Client implements Runnable{
             System.out.println("Enter page: ");
             String urlString = reader.nextLine();
             String time = String.valueOf(System.currentTimeMillis());
-            myRequests.add(time);
+            try {
+                FileWritter.write(ip,time);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             if (ClientAndServer.getNeighbours().size() >= 2){
                 for (String i : ClientAndServer.getNeighbours()) {
                     try {
@@ -40,8 +47,9 @@ public class Client implements Runnable{
                         conn.setRequestProperty("veebiaadress", urlString);
                         conn.setRequestProperty("messageid",time);
                         conn.setRequestProperty("timetolive", String.valueOf(10));
+                        conn.setRequestProperty("ip", String.valueOf(ip));
                         conn.setDoOutput(true);
-                        Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+                        Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
                         in.close();
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -53,11 +61,7 @@ public class Client implements Runnable{
         }
     }
 
-    public synchronized void stop() {
+    synchronized void stop() {
         this.isRunning = false;
-    }
-
-    public ArrayList<String> getMyRequests() {
-        return myRequests;
     }
 }

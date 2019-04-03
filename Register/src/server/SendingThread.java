@@ -2,6 +2,7 @@ package server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
+import util.FileReader;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -18,17 +19,17 @@ import java.util.Base64;
 //new Thread(new SendingThread(in)).start();
 public class SendingThread implements Runnable {
 
-    private ArrayList<String> neighbors = new ArrayList<>(Arrays.asList("7500", "8000", "8500"));
+    private String port;
     private ArrayList<String> httpText;
     private String postData;
     private double lazyness;
     private String getData;
     private String requestMethod;
-    private String fileType;
     private String messageId;
     private Integer timeToLive;
 
-    public SendingThread(ArrayList<String> httpText, String postData) {
+    SendingThread(int port, ArrayList<String> httpText, String postData) {
+        this.port = String.valueOf(port);
         this.httpText = httpText;
         this.postData = postData;
     }
@@ -64,7 +65,7 @@ public class SendingThread implements Runnable {
         }
     }
 
-    public void sendForward() throws IOException {
+    private void sendForward() throws IOException {
         System.out.println("GET - forward");
         System.out.println("Lazyness: "+ lazyness);
         for (String string : httpText) {
@@ -89,32 +90,56 @@ public class SendingThread implements Runnable {
             conn.setRequestProperty("messageid",messageId);
             conn.setRequestProperty("timetolive", String.valueOf(timeToLive-1));
             conn.setDoOutput(true);
-            //Reader inasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+            Reader inasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+            inasd.close();
         }
     }
 
-    public void sendBack() throws IOException {
+    private void sendBack() throws IOException {
+        boolean myRequest = false;
         System.out.println("POST - back");
         System.out.println(httpText);
-        ObjectMapper mapper1 = new ObjectMapper();
-        PostPackage package1 = mapper1.readValue(postData, PostPackage.class);
-        timeToLive = package1.getTimetolive() - 1;
-        package1.setTimetolive(timeToLive);
-        String forward = mapper1.writeValueAsString(package1);
-        for (String neighbor : ClientAndServer.getNeighbours()) {
-            URL url = new URL("http://localhost:"+neighbor);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "application/json");
-            OutputStream outputStream = conn.getOutputStream();
-            outputStream.write(forward.getBytes());
-            outputStream.close();
-            conn.setDoOutput(true);
-            //Reader inasdasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+        ObjectMapper mapper = new ObjectMapper();
+        //System.out.println(postData);
+        //System.out.println(httpText);
+        PostPackage postPackage = mapper.readValue(postData, PostPackage.class);
+        String id = postPackage.getMessageid();
+        ArrayList<String> myRequests = FileReader.read(Integer.valueOf(port));
+        for (String request : myRequests) {
+            if (request.equals(id)) {
+                myRequest = true;
+                break;
+            }
+        }
+        if (myRequest) {
+            String fileType = postPackage.getFileType();
+            String encodedString = postPackage.getContent();
+            byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
+
+            // create output file
+            FileOutputStream outputStream2 = new FileOutputStream(port + "."+fileType);
+            outputStream2.write(decodedBytes);
+            outputStream2.close();
+        } else {
+            timeToLive = postPackage.getTimetolive() - 1;
+            postPackage.setTimetolive(timeToLive);
+            String forward = mapper.writeValueAsString(postPackage);
+            for (String neighbor : ClientAndServer.getNeighbours()) {
+                URL url = new URL("http://localhost:"+neighbor);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
+                OutputStream outputStream = conn.getOutputStream();
+                outputStream.write(forward.getBytes());
+                outputStream.close();
+                conn.setDoOutput(true);
+                Reader inasdasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+                inasdasd.close();
+            }
         }
     }
 
-    public void download() throws IOException {
+    private void download() throws IOException {
         System.out.println("GET - download");
         System.out.println("Lazyness: "+ lazyness);
         ObjectMapper mapper1 = new ObjectMapper();
@@ -126,188 +151,213 @@ public class SendingThread implements Runnable {
                 this.messageId = string.substring(11);
             }
         }
-        //System.out.println(getData);
-        //System.out.println(messageId);
-        if (getData.contains(".jpg")) {
-            this.fileType = "jpg";
-        } else if (getData.contains(".mp3")) {
-            this.fileType = "mp3";
-        } else if (getData.contains(".pdf")) {
-            this.fileType = "pdf";
-        } else if (getData.contains(".gif")) {
-            this.fileType = "gif";
-        } else if (getData.contains(".txt")) {
-            this.fileType = "txt";
-        } else if (getData.contains(".htm")) {
-            this.fileType = "htm";
-        } else if (getData.contains(".html")) {
-            this.fileType = "html";
-        } else if (getData.contains(".doc")) {
-            this.fileType = "doc";
-        } else if (getData.contains(".rtf")) {
-            this.fileType = "rtf";
-        } else if (getData.contains(".wav")) {
-            this.fileType = "wav";
-        } else if (getData.contains(".7z")) {
-            this.fileType = "7z";
-        } else if (getData.contains(".tar.gz")) {
-            this.fileType = "tar.gz";
-        } else if (getData.contains(".deb")) {
-            this.fileType = "deb";
-        } else if (getData.contains(".rar")) {
-            this.fileType = "rar";
-        } else if (getData.contains(".zip")) {
-            this.fileType = "zip";
-        } else if (getData.contains(".bin")) {
-            this.fileType = "bin";
-        } else if (getData.contains(".iso")) {
-            this.fileType = "iso";
-        } else if (getData.contains(".csv")) {
-            this.fileType = "csv";
-        } else if (getData.contains(".dat")) {
-            this.fileType = "dat";
-        } else if (getData.contains(".db")) {
-            this.fileType = "db";
-        } else if (getData.contains(".log")) {
-            this.fileType = "log";
-        } else if (getData.contains(".torrent")) {
-            this.fileType = "torrent";
-        } else if (getData.contains(".mdb")) {
-            this.fileType = "mdb";
-        } else if (getData.contains(".sql")) {
-            this.fileType = "sql";
-        } else if (getData.contains(".tar")) {
-            this.fileType = "tar";
-        } else if (getData.contains(".xml")) {
-            this.fileType = "xml";
-        } else if (getData.contains(".js")) {
-            this.fileType = "js";
-        } else if (getData.contains(".jar")) {
-            this.fileType = "jar";
-        } else if (getData.contains(".apk")) {
-            this.fileType = "apk";
-        } else if (getData.contains(".bat")) {
-            this.fileType = "bat";
-        } else if (getData.contains(".bin")) {
-            this.fileType = "bin";
-        } else if (getData.contains(".cgi")) {
-            this.fileType = "cgi";
-        } else if (getData.contains(".pl")) {
-            this.fileType = "pl";
-        } else if (getData.contains(".exe")) {
-            this.fileType = "exe";
-        } else if (getData.contains(".py")) {
-            this.fileType = "py";
-        } else if (getData.contains(".ttf")) {
-            this.fileType = "ttf";
-        } else if (getData.contains(".bmp")) {
-            this.fileType = "bmp";
-        } else if (getData.contains(".ico")) {
-            this.fileType = "ico";
-        } else if (getData.contains(".jpeg")) {
-            this.fileType = "jpeg";
-        } else if (getData.contains(".jpg")) {
-            this.fileType = "jpg";
-        } else if (getData.contains(".png")) {
-            this.fileType = "png";
-        } else if (getData.contains(".asp")) {
-            this.fileType = "asp";
-        } else if (getData.contains(".aspx")) {
-            this.fileType = "aspx";
-        } else if (getData.contains(".cer")) {
-            this.fileType = "cer";
-        } else if (getData.contains(".css")) {
-            this.fileType = "css";
-        } else if (getData.contains(".jsp")) {
-            this.fileType = "jsp";
-        } else if (getData.contains(".php")) {
-            this.fileType = "php";
-        } else if (getData.contains(".rss")) {
-            this.fileType = "rss";
-        } else if (getData.contains(".xhtml")) {
-            this.fileType = "xhtml";
-        } else if (getData.contains(".key")) {
-            this.fileType = "key";
-        } else if (getData.contains(".pps")) {
-            this.fileType = "pps";
-        } else if (getData.contains(".ppt")) {
-            this.fileType = "ppt";
-        } else if (getData.contains(".class")) {
-            this.fileType = "class";
-        } else if (getData.contains(".java")) {
-            this.fileType = "java";
-        } else if (getData.contains(".cpp")) {
-            this.fileType = "cpp";
-        } else if (getData.contains(".vb")) {
-            this.fileType = "vb";
-        } else if (getData.contains(".xls")) {
-            this.fileType = "xls";
-        } else if (getData.contains(".bak")) {
-            this.fileType = "bak";
-        } else if (getData.contains(".dll")) {
-            this.fileType = "dll";
-        } else if (getData.contains(".cfg")) {
-            this.fileType = "cfg";
-        } else if (getData.contains(".dmp")) {
-            this.fileType = "dmp";
-        } else if (getData.contains(".ini")) {
-            this.fileType = "ini";
-        } else if (getData.contains(".msi")) {
-            this.fileType = "msi";
-        } else if (getData.contains(".sys")) {
-            this.fileType = "sys";
-        } else if (getData.contains(".avi")) {
-            this.fileType = "avi";
-        } else if (getData.contains(".flv")) {
-            this.fileType = "flv";
-        } else if (getData.contains(".mp4")) {
-            this.fileType = "mp4";
-        } else if (getData.contains(".mpg")) {
-            this.fileType = "mpg";
-        } else if (getData.contains(".mpeg")) {
-            this.fileType = "mpeg";
-        } else if (getData.contains(".wmv")) {
-            this.fileType = "wmv";
-        } else {
-            this.fileType = "html";
+
+        boolean myRequest = false;
+        ArrayList<String> myRequests = FileReader.read(Integer.valueOf(port));
+        for (String request : myRequests) {
+            if (request.equals(messageId)) {
+                myRequest = true;
+                break;
+            }
         }
-        URL website = new URL(getData);
-        ReadableByteChannel byteChannel = Channels.newChannel(website.openStream());
-        String fileName = "temporary." + fileType;
-        FileOutputStream outputStream = new FileOutputStream(fileName);
-        outputStream.getChannel().transferFrom(byteChannel, 0, Long.MAX_VALUE);
-        outputStream.close();
+        if (!myRequest) {
+            //System.out.println(getData);
+            //System.out.println(messageId);
+            String fileType;
+            if (getData.contains(".jpg")) {
+                fileType = "jpg";
+            } else if (getData.contains(".mp3")) {
+                fileType = "mp3";
+            } else if (getData.contains(".pdf")) {
+                fileType = "pdf";
+            } else if (getData.contains(".gif")) {
+                fileType = "gif";
+            } else if (getData.contains(".txt")) {
+                fileType = "txt";
+            } else if (getData.contains(".htm")) {
+                fileType = "htm";
+            } else if (getData.contains(".html")) {
+                fileType = "html";
+            } else if (getData.contains(".doc")) {
+                fileType = "doc";
+            } else if (getData.contains(".rtf")) {
+                fileType = "rtf";
+            } else if (getData.contains(".wav")) {
+                fileType = "wav";
+            } else if (getData.contains(".7z")) {
+                fileType = "7z";
+            } else if (getData.contains(".tar.gz")) {
+                fileType = "tar.gz";
+            } else if (getData.contains(".deb")) {
+                fileType = "deb";
+            } else if (getData.contains(".rar")) {
+                fileType = "rar";
+            } else if (getData.contains(".zip")) {
+                fileType = "zip";
+            } else if (getData.contains(".bin")) {
+                fileType = "bin";
+            } else if (getData.contains(".iso")) {
+                fileType = "iso";
+            } else if (getData.contains(".csv")) {
+                fileType = "csv";
+            } else if (getData.contains(".dat")) {
+                fileType = "dat";
+            } else if (getData.contains(".db")) {
+                fileType = "db";
+            } else if (getData.contains(".log")) {
+                fileType = "log";
+            } else if (getData.contains(".torrent")) {
+                fileType = "torrent";
+            } else if (getData.contains(".mdb")) {
+                fileType = "mdb";
+            } else if (getData.contains(".sql")) {
+                fileType = "sql";
+            } else if (getData.contains(".tar")) {
+                fileType = "tar";
+            } else if (getData.contains(".xml")) {
+                fileType = "xml";
+            } else if (getData.contains(".js")) {
+                fileType = "js";
+            } else if (getData.contains(".jar")) {
+                fileType = "jar";
+            } else if (getData.contains(".apk")) {
+                fileType = "apk";
+            } else if (getData.contains(".bat")) {
+                fileType = "bat";
+            } else if (getData.contains(".bin")) {
+                fileType = "bin";
+            } else if (getData.contains(".cgi")) {
+                fileType = "cgi";
+            } else if (getData.contains(".pl")) {
+                fileType = "pl";
+            } else if (getData.contains(".exe")) {
+                fileType = "exe";
+            } else if (getData.contains(".py")) {
+                fileType = "py";
+            } else if (getData.contains(".ttf")) {
+                fileType = "ttf";
+            } else if (getData.contains(".bmp")) {
+                fileType = "bmp";
+            } else if (getData.contains(".ico")) {
+                fileType = "ico";
+            } else if (getData.contains(".jpeg")) {
+                fileType = "jpeg";
+            } else if (getData.contains(".jpg")) {
+                fileType = "jpg";
+            } else if (getData.contains(".png")) {
+                fileType = "png";
+            } else if (getData.contains(".asp")) {
+                fileType = "asp";
+            } else if (getData.contains(".aspx")) {
+                fileType = "aspx";
+            } else if (getData.contains(".cer")) {
+                fileType = "cer";
+            } else if (getData.contains(".css")) {
+                fileType = "css";
+            } else if (getData.contains(".jsp")) {
+                fileType = "jsp";
+            } else if (getData.contains(".php")) {
+                fileType = "php";
+            } else if (getData.contains(".rss")) {
+                fileType = "rss";
+            } else if (getData.contains(".xhtml")) {
+                fileType = "xhtml";
+            } else if (getData.contains(".key")) {
+                fileType = "key";
+            } else if (getData.contains(".pps")) {
+                fileType = "pps";
+            } else if (getData.contains(".ppt")) {
+                fileType = "ppt";
+            } else if (getData.contains(".class")) {
+                fileType = "class";
+            } else if (getData.contains(".java")) {
+                fileType = "java";
+            } else if (getData.contains(".cpp")) {
+                fileType = "cpp";
+            } else if (getData.contains(".vb")) {
+                fileType = "vb";
+            } else if (getData.contains(".xls")) {
+                fileType = "xls";
+            } else if (getData.contains(".bak")) {
+                fileType = "bak";
+            } else if (getData.contains(".dll")) {
+                fileType = "dll";
+            } else if (getData.contains(".cfg")) {
+                fileType = "cfg";
+            } else if (getData.contains(".dmp")) {
+                fileType = "dmp";
+            } else if (getData.contains(".ini")) {
+                fileType = "ini";
+            } else if (getData.contains(".msi")) {
+                fileType = "msi";
+            } else if (getData.contains(".sys")) {
+                fileType = "sys";
+            } else if (getData.contains(".avi")) {
+                fileType = "avi";
+            } else if (getData.contains(".flv")) {
+                fileType = "flv";
+            } else if (getData.contains(".mp4")) {
+                fileType = "mp4";
+            } else if (getData.contains(".mpg")) {
+                fileType = "mpg";
+            } else if (getData.contains(".mpeg")) {
+                fileType = "mpeg";
+            } else if (getData.contains(".wmv")) {
+                fileType = "wmv";
+            } else {
+                fileType = "html";
+            }
+            URL website = new URL(getData);
+            ReadableByteChannel byteChannel = Channels.newChannel(website.openStream());
+            String fileName = port + "." + fileType;
+            FileOutputStream outputStream = new FileOutputStream(fileName);
+            outputStream.getChannel().transferFrom(byteChannel, 0, Long.MAX_VALUE);
+            outputStream.close();
 
-        File inputFile = new File(fileName);
+            File inputFile = new File(fileName);
 
-        byte[] fileContent = FileUtils.readFileToByteArray(inputFile);
-        String encodedString = Base64
-                .getEncoder()
-                .encodeToString(fileContent);
+            byte[] fileContent = FileUtils.readFileToByteArray(inputFile);
+            String encodedString = Base64
+                    .getEncoder()
+                    .encodeToString(fileContent);
 
-        // decode the string and write to file
-        byte[] decodedBytes = Base64
-                .getDecoder()
-                .decode(encodedString);
+            // decode the string and write to file
+            //SEDA POLE VAJA PRAEGU. TESTIMISEKS AINULT.
+//        byte[] decodedBytes = Base64
+//                .getDecoder()
+//                .decode(encodedString);
+//
+//        // create output file
+//        FileOutputStream outputStream2 = new FileOutputStream("new."+fileType);
+//        outputStream2.write(decodedBytes);
+//        outputStream2.close();
+            for (String neighbor : ClientAndServer.getNeighbours()) {
+                PostPackage postPackage = new PostPackage();
+                postPackage.setStatus(200);
+                postPackage.setMimetype("text/html");
+                postPackage.setMessageid(messageId);
+                postPackage.setTimetolive(20);
+                postPackage.setFileType(fileType);
+                postPackage.setContent(encodedString);
+                String outData = mapper1.writeValueAsString(postPackage);
+                System.out.println(outData);
 
-        // create output file
-        FileOutputStream outputStream2 = new FileOutputStream("new."+fileType);
-        outputStream2.write(decodedBytes);
-        outputStream2.close();
+                URL url = new URL("http://localhost:"+neighbor);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setDoOutput(true);
+                OutputStream outputStream2 = conn.getOutputStream();
+                outputStream2.write(outData.getBytes());
+                outputStream2.close();
+                Reader inasdasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+                inasdasd.close();
 
-        PostPackage postPackage = new PostPackage();
-        postPackage.setStatus(200);
-        postPackage.setMimetype("text/html");
-        postPackage.setMessageid(messageId);
-        postPackage.setTimetolive(20);
-        postPackage.setFileType(fileType);
-        postPackage.setContent(encodedString);
-        String outData = mapper1.writeValueAsString(postPackage);
-        System.out.println(outData);
-
+            }
+        }
     }
 
-    public boolean getMyRequest() {
+    private boolean getMyRequest() {
         lazyness = Math.random();
         double chance = 0.5;
         return lazyness <= chance;

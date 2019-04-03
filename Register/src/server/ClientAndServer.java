@@ -10,24 +10,25 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ClientAndServer implements Runnable {
 
-    public static int myIp;
-    public static ArrayList<String> neighbours = new ArrayList<>();
-    public String acting;
-    public Boolean isRunning;
-    public String prev = "";
+    private static int myIp;
+    private static ArrayList<String> neighbours = new ArrayList<>();
+    private String acting;
+    private Boolean isRunning;
+    private String prev = "";
 
-    public ClientAndServer(int port) {
+    ClientAndServer(int port) {
         myIp = port;
         this.isRunning = true;
     }
 
     public void run() {
-        Client client = new Client();
+        Client client = new Client(myIp);
         ClientListener clientListener = new ClientListener(myIp);
         Register register = new Register(9000);
         while (isRunning) {
@@ -81,7 +82,7 @@ public class ClientAndServer implements Runnable {
         return myIp;
     }
 
-    public void setNeighbors() throws IOException {
+    private void setNeighbors() throws IOException {
         URL url = new URL("http://localhost:9000");
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         conn.setRequestMethod("POST");
@@ -89,9 +90,9 @@ public class ClientAndServer implements Runnable {
         conn.setRequestProperty("Content-Type", "text/plain");
         conn.setRequestProperty("Content-Length", Integer.toString(body.length()));
         conn.setDoOutput(true);
-        conn.getOutputStream().write(body.getBytes("UTF8"));
+        conn.getOutputStream().write(body.getBytes(StandardCharsets.UTF_8));
 
-        Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+        Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
 
         StringBuilder str = new StringBuilder();
         for (int c; (c = in.read()) >= 0;) {
@@ -118,7 +119,7 @@ public class ClientAndServer implements Runnable {
         neighbours = new ArrayList<>(Arrays.asList(arr));
     }
 
-    public static ArrayList<String> getNeighbours(){
+    static ArrayList<String> getNeighbours(){
         return neighbours;
     }
 }

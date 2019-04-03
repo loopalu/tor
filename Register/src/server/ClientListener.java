@@ -8,9 +8,9 @@ public class ClientListener implements Runnable {
 
     private int port;
     private boolean isRunning = true;
-    public ServerSocket serverSocket;
+    private ServerSocket serverSocket;
 
-    public ClientListener(int port) {
+    ClientListener(int port) {
         this.port = port;
     }
 
@@ -29,12 +29,12 @@ public class ClientListener implements Runnable {
                 throw new RuntimeException(
                         "Error accepting client connection", e);
             }
-            new Thread(new SenderReceiver(clientSocket)).start();
+            new Thread(new SenderReceiver(port, clientSocket)).start();
         }
         System.out.println("Server Stopped.");
     }
 
-    public synchronized void stop() {
+    synchronized void stop() {
         this.isRunning = false;
     }
 

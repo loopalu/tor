@@ -7,10 +7,12 @@ import java.util.ArrayList;
 public class SenderReceiver implements Runnable {
     private ArrayList<Long> messages = new ArrayList<>();
 
+    private int port;
     private Socket clientSocket;
 
 
-    SenderReceiver(Socket clientSocket) {
+    SenderReceiver(int port, Socket clientSocket) {
+        this.port = port;
         this.clientSocket = clientSocket;
     }
 
@@ -50,7 +52,7 @@ public class SenderReceiver implements Runnable {
             }
             //System.out.println(postData);
             //System.out.println(httpText);
-            new Thread(new SendingThread(httpText, postData)).start();
+            new Thread(new SendingThread(port, httpText, postData)).start();
             String message = "HTTP/1.1 200 OK";
             output.write(message.getBytes());
             output.close();
