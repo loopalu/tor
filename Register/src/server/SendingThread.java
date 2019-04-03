@@ -1,5 +1,7 @@
 package server;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -89,12 +91,21 @@ public class SendingThread implements Runnable {
 
     public void sendBack() throws IOException {
         System.out.println("POST - back");
+        System.out.println(httpText);
         System.out.println(postData);
-//        URL url = new URL("http://localhost:8000");
-//        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//        conn.setRequestMethod("POST");
-//        conn.setRequestProperty("Content-Type", "text/plain");
-//        conn.setDoOutput(true);
+
+//        ObjectMapper mapper1 = new ObjectMapper();
+//        PostPackage package1 = mapper1.readValue(postData, PostPackage.class);
+//        System.out.println(package1.getContent());
+//        for (String neighbor : neighbors) {
+//            URL url = new URL("http://localhost:"+neighbor);
+//            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//            conn.setRequestMethod("POST");
+//            conn.setRequestProperty("Content-Type", "text/plain"); // ALATI EI SAA OLLA TEXT !!!!!
+//            //SIIA TULEB BODY LISAMINE !!!!!!!
+//            conn.setDoOutput(true);
+//        }
+
 //
 //        Reader inasdasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
     }
@@ -259,6 +270,7 @@ public class SendingThread implements Runnable {
         ReadableByteChannel byteChannel = Channels.newChannel(website.openStream());
         FileOutputStream outputStream = new FileOutputStream("temporary."+fileType);
         outputStream.getChannel().transferFrom(byteChannel, 0, Long.MAX_VALUE);
+        //VAJA TEHA TAGASI SAATMINE !!!!!!!!!
 //        URL website = new URL("http://pm1.narvii.com/6311/3d4ff752b939276f48975c010a0e3de1ef116d99_00.jpg");
 //        ReadableByteChannel byteChannel = Channels.newChannel(website.openStream());
 //        FileOutputStream outputStream = new FileOutputStream("chika.jpg");
