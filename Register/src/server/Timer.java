@@ -15,13 +15,6 @@ public class Timer implements Runnable{
         isRunning = false;
     }
 
-
-    //private static AtomicBoolean isRunning = new AtomicBoolean(true);
-
-    //public static void stop() {
-        //isRunning.set(false);
-    //}
-
     //Every 60 seconds activates serviceRemove function
     public void run() {
         try {
@@ -38,7 +31,6 @@ public class Timer implements Runnable{
     private void serviceRemove() {
         String str;
         ArrayList<String> arr = new ArrayList<>(Register.listOfIps);
-        System.out.println("Here");
         for (String i : arr) {
             System.out.println(i);
             if (i.length() <= 5) {

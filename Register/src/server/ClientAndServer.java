@@ -37,7 +37,6 @@ public class ClientAndServer implements Runnable {
                     URL urlServer = new URL("http://localhost:9000");
                     HttpURLConnection urlConn = (HttpURLConnection) urlServer.openConnection();
                     urlConn.connect();
-                    System.out.println("Here");
                     if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
                         acting = "Client";
                     } else {
@@ -96,7 +95,6 @@ public class ClientAndServer implements Runnable {
 
         StringBuilder str = new StringBuilder();
         for (int c; (c = in.read()) >= 0;) {
-            System.out.print((char) c);
             str.append((char) c);
         }
         String finString = str.toString();
@@ -114,7 +112,6 @@ public class ClientAndServer implements Runnable {
         if (ipString == null) {
             return;
         }
-        System.out.println(ipString);
         String[] arr = ipString.split(",");
         neighbours = new ArrayList<>(Arrays.asList(arr));
     }

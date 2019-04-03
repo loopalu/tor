@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.Base64;
 
 
-//new Thread(new SendingThread(in)).start();
 public class SendingThread implements Runnable {
 
     private String port;

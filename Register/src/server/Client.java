@@ -25,7 +25,7 @@ public class Client implements Runnable{
     }
 
     public void run() {
-
+        System.out.println("Client started");
         while (isRunning) {
             Scanner reader = new Scanner(System.in);
             System.out.println("Enter page: ");
@@ -39,7 +39,6 @@ public class Client implements Runnable{
             if (ClientAndServer.getNeighbours().size() >= 2){
                 for (String i : ClientAndServer.getNeighbours()) {
                     try {
-                        System.out.println(i);
                         URL url = new URL("http://localhost:"+i);
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                         conn.setRequestMethod("GET");

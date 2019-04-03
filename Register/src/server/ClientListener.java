@@ -18,7 +18,7 @@ public class ClientListener implements Runnable {
     public void run() {
         openServerSocket();
         while (isRunning) {
-            Socket clientSocket = null;
+            Socket clientSocket;
             try {
                 clientSocket = this.serverSocket.accept();
             } catch (IOException e) {

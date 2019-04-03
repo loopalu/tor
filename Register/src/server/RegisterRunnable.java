@@ -25,13 +25,11 @@ public class RegisterRunnable implements Runnable{
             BufferedReader in = new BufferedReader(new InputStreamReader(input));
             String line;
             line = in.readLine();
-            System.out.println("HTTP-HEADER: " + line);
             line = "";
 
             // looks for post data
             int postDataI = -1;
             while ((line = in.readLine()) != null && (line.length() != 0)) {
-                System.out.println("HTTP-HEADER: " + line);
                 if (line.contains("Content-Length:")) {
                     postDataI = new Integer(
                             line.substring(
@@ -47,7 +45,6 @@ public class RegisterRunnable implements Runnable{
                 in.read(charArray, 0, postDataI);
                 postData = new String(charArray);
             }
-            System.out.println(postData);
 
             //On false entry sends back a message and closes thread
             if (postData == null) {
@@ -76,12 +73,6 @@ public class RegisterRunnable implements Runnable{
             //Compiles a message to send back based on information gotten from the body of message received.
             if (actionNeeded.equals("Enter") && test.get("ip") != null ) {
                 message = actionEnter(ip);
-            //} else if (actionNeeded.equals("Leave") && (test.get("LeaverIp") != null) && (test.get("PairedIp") != null)){
-                //message = actionLeave(ip,(String) test.get("LeaverIp"), (String) test.get("PairedIp"));
-            //} else if (actionNeeded.equals("NewPairs") && (test.get("OldPair1") != null) && (test.get("OldPair2") != null)) {
-                //Register.listOfIps.remove((String) test.get("OldPair1"));
-                //Register.listOfIps.remove((String) test.get("OldPair2"));
-                //message = actionEnter(ip);
             } else {
                 message = "HTTP/1.1 200 OK\r\n" +
                         "Content-Type: text/html\r\n" +
@@ -136,31 +127,4 @@ public class RegisterRunnable implements Runnable{
         }
         return message;
     }
-
-    /*private String actionLeave(String ip, String leaverIp, String pairIp) {
-        String message;
-        Register.listOfIps.remove(leaverIp);
-        while (true) {
-            System.out.println(Register.listOfIps);
-            if (Register.listOfIps.size() > 2) {
-                String[] ips = new String[Register.listOfIps.size() - 2];
-                int n = 0;
-                for (String i : Register.listOfIps) {
-                    if (!i.equals(ip) && !i.equals(pairIp)) {
-                        ips[n] = i;
-                        n += 1;
-                    }
-                }
-                String str = String.join(",", ips);
-                JSONObject body = new JSONObject();
-                body.put("ips",str);
-                message = "HTTP/1.1 200 OK\r\n" +
-                        "Content-Type: application/json\r\n" +
-                        "\r\n" +
-                        body;
-                break;
-            }
-        }
-        return message;
-    }*/
 }
