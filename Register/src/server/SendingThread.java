@@ -117,6 +117,7 @@ public class SendingThread implements Runnable {
     public void download() throws IOException {
         System.out.println("GET - download");
         System.out.println("Lazyness: "+ lazyness);
+        ObjectMapper mapper1 = new ObjectMapper();
         for (String string : httpText) {
             if (string.contains("veebiaadress")) {
                 this.getData = string.substring(14);
@@ -125,8 +126,8 @@ public class SendingThread implements Runnable {
                 this.messageId = string.substring(11);
             }
         }
-        System.out.println(getData);
-        System.out.println(messageId);
+        //System.out.println(getData);
+        //System.out.println(messageId);
         if (getData.contains(".jpg")) {
             this.fileType = "jpg";
         } else if (getData.contains(".mp3")) {
@@ -294,7 +295,16 @@ public class SendingThread implements Runnable {
         outputStream2.write(decodedBytes);
         outputStream2.close();
 
-        //VAJA TEHA FAILI TAGASI SAATMINE!!!!!
+        PostPackage postPackage = new PostPackage();
+        postPackage.setStatus(200);
+        postPackage.setMimetype("text/html");
+        postPackage.setMessageid(messageId);
+        postPackage.setTimetolive(20);
+        postPackage.setFileType(fileType);
+        postPackage.setContent(encodedString);
+        String outData = mapper1.writeValueAsString(postPackage);
+        System.out.println(outData);
+
     }
 
     public boolean getMyRequest() {

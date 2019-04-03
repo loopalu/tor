@@ -6,6 +6,7 @@ public class PostPackage {
     private String messageid;
     private Integer timetolive;
     private String content;
+    private String fileType;
 
     public Integer getStatus() {
         return status;
@@ -42,7 +43,7 @@ public class PostPackage {
     @Override
     public String toString() {
         return "PostPackage [status=" + status + ", mimetype=" + mimetype + ", messageid=" + messageid
-                + ", timetolive=" + timetolive + ", content=" + content + "]";
+                + ", timetolive=" + timetolive + ", content=" + content + ", filetype=" + fileType + "]";
     }
 
     public Integer getTimetolive() {
@@ -51,5 +52,13 @@ public class PostPackage {
 
     public void setTimetolive(Integer timetolive) {
         this.timetolive = timetolive;
+    }
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
     }
 }
