@@ -2,14 +2,8 @@ package server;
 
 import util.FileWritter;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -29,7 +23,12 @@ public class Client implements Runnable{
         while (isRunning) {
             Scanner reader = new Scanner(System.in);
             System.out.println("Enter page: ");
-            String urlString = reader.nextLine();
+            String urlString = null;
+            try {
+                urlString = URLEncoder.encode(reader.nextLine(), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             String time = String.valueOf(System.currentTimeMillis());
             try {
                 FileWritter.write(ip,time);

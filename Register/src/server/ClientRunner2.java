@@ -3,7 +3,7 @@ package server;
 import java.io.File;
 import java.io.IOException;
 
-public class testing2 {
+public class ClientRunner2 {
 
     private static final Integer ADDRESS = 7000;
 

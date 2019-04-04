@@ -7,12 +7,12 @@ import util.FileReader;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 
 
@@ -78,19 +78,23 @@ public class SendingThread implements Runnable {
                 this.timeToLive = Integer.valueOf(string.substring(12));
             }
         }
-        System.out.println(getData);
-        System.out.println(messageId);
-        for (String neighbor : ClientAndServer.getNeighbours()) {
-            URL url = new URL("http://localhost:"+neighbor);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Content-Type", "text/plain");
-            conn.setRequestProperty("veebiaadress", getData);
-            conn.setRequestProperty("messageid",messageId);
-            conn.setRequestProperty("timetolive", String.valueOf(timeToLive-1));
-            conn.setDoOutput(true);
-            Reader inasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-            inasd.close();
+        if (timeToLive != null) {
+            if (timeToLive > 0) {
+                //System.out.println(getData);
+                //System.out.println(messageId);
+                for (String neighbor : ClientAndServer.getNeighbours()) {
+                    URL url = new URL("http://localhost:"+neighbor);
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setRequestMethod("GET");
+                    conn.setRequestProperty("Content-Type", "text/plain");
+                    conn.setRequestProperty("veebiaadress", getData);
+                    conn.setRequestProperty("messageid",messageId);
+                    conn.setRequestProperty("timetolive", String.valueOf(timeToLive-1));
+                    conn.setDoOutput(true);
+                    Reader inasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+                    inasd.close();
+                }
+            }
         }
     }
 
@@ -103,37 +107,42 @@ public class SendingThread implements Runnable {
         //System.out.println(httpText);
         PostPackage postPackage = mapper.readValue(postData, PostPackage.class);
         String id = postPackage.getMessageid();
-        ArrayList<String> myRequests = FileReader.read(Integer.valueOf(port));
-        for (String request : myRequests) {
-            if (request.equals(id)) {
-                myRequest = true;
-                break;
-            }
-        }
-        if (myRequest) {
-            String fileType = postPackage.getFileType();
-            String encodedString = postPackage.getContent();
-            byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
+        Integer timetolive = postPackage.getTimetolive();
+        if (timetolive != null) {
+            if (timetolive > 0) {
+                ArrayList<String> myRequests = FileReader.read(Integer.valueOf(port));
+                for (String request : myRequests) {
+                    if (request.equals(id)) {
+                        myRequest = true;
+                        break;
+                    }
+                }
+                if (myRequest) {
+                    String fileType = postPackage.getFileType();
+                    String encodedString = postPackage.getContent();
+                    byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
 
-            // create output file
-            FileOutputStream outputStream2 = new FileOutputStream(port + "."+fileType);
-            outputStream2.write(decodedBytes);
-            outputStream2.close();
-        } else {
-            timeToLive = postPackage.getTimetolive() - 1;
-            postPackage.setTimetolive(timeToLive);
-            String forward = mapper.writeValueAsString(postPackage);
-            for (String neighbor : ClientAndServer.getNeighbours()) {
-                URL url = new URL("http://localhost:"+neighbor);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/json");
-                OutputStream outputStream = conn.getOutputStream();
-                outputStream.write(forward.getBytes());
-                outputStream.close();
-                conn.setDoOutput(true);
-                Reader inasdasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-                inasdasd.close();
+                    // create output file
+                    FileOutputStream outputStream2 = new FileOutputStream(port + "."+fileType);
+                    outputStream2.write(decodedBytes);
+                    outputStream2.close();
+                } else {
+                    timeToLive = postPackage.getTimetolive() - 1;
+                    postPackage.setTimetolive(timeToLive);
+                    String forward = mapper.writeValueAsString(postPackage);
+                    for (String neighbor : ClientAndServer.getNeighbours()) {
+                        URL url = new URL("http://localhost:"+neighbor);
+                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                        conn.setRequestMethod("POST");
+                        conn.setRequestProperty("Content-Type", "application/json");
+                        conn.setDoOutput(true);
+                        OutputStream outputStream = conn.getOutputStream();
+                        outputStream.write(forward.getBytes());
+                        outputStream.close();
+                        Reader inasdasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+                        inasdasd.close();
+                    }
+                }
             }
         }
     }
@@ -144,7 +153,7 @@ public class SendingThread implements Runnable {
         ObjectMapper mapper1 = new ObjectMapper();
         for (String string : httpText) {
             if (string.contains("veebiaadress")) {
-                this.getData = string.substring(14);
+                this.getData = URLDecoder.decode(string.substring((14)));
             }
             if (string.contains("messageid")) {
                 this.messageId = string.substring(11);
@@ -316,20 +325,8 @@ public class SendingThread implements Runnable {
             File inputFile = new File(fileName);
 
             byte[] fileContent = FileUtils.readFileToByteArray(inputFile);
-            String encodedString = Base64
-                    .getEncoder()
-                    .encodeToString(fileContent);
+            String encodedString = Base64.getEncoder().encodeToString(fileContent);
 
-            // decode the string and write to file
-            //SEDA POLE VAJA PRAEGU. TESTIMISEKS AINULT.
-//        byte[] decodedBytes = Base64
-//                .getDecoder()
-//                .decode(encodedString);
-//
-//        // create output file
-//        FileOutputStream outputStream2 = new FileOutputStream("new."+fileType);
-//        outputStream2.write(decodedBytes);
-//        outputStream2.close();
             for (String neighbor : ClientAndServer.getNeighbours()) {
                 PostPackage postPackage = new PostPackage();
                 postPackage.setStatus(200);
@@ -351,7 +348,6 @@ public class SendingThread implements Runnable {
                 outputStream2.close();
                 Reader inasdasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
                 inasdasd.close();
-
             }
         }
     }

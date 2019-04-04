@@ -5,11 +5,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class SenderReceiver implements Runnable {
-    private ArrayList<Long> messages = new ArrayList<>();
 
     private int port;
     private Socket clientSocket;
-
 
     SenderReceiver(int port, Socket clientSocket) {
         this.port = port;

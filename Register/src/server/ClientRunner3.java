@@ -3,9 +3,9 @@ package server;
 import java.io.File;
 import java.io.IOException;
 
-public class testing {
+public class ClientRunner3 {
 
-    private static final Integer ADDRESS = 8000;
+    private static final Integer ADDRESS = 7500;
 
     public static void main(String[] args) {
         ClientAndServer clientAndServer = new ClientAndServer(ADDRESS);
