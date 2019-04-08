@@ -1,6 +1,4 @@
-package server;
-
-import java.util.Scanner;
+package Registry;
 
 public class RegistryStarter {
 

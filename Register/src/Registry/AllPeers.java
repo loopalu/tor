@@ -1,4 +1,4 @@
-package server;
+package Registry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +28,6 @@ public class AllPeers {
 
     @Override
     public String toString() {
-        return "AllPeers{" +
-                "peers=" + peers +
-                '}';
+        return String.valueOf(peers);
     }
 }

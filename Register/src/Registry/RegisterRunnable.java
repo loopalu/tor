@@ -1,4 +1,4 @@
-package server;
+package Registry;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;

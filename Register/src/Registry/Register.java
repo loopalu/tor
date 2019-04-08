@@ -1,14 +1,13 @@
-package server;
+package Registry;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 
 public class Register implements Runnable {
 
     private int port;
-    public static AllPeers listOfPeers;
+    public static AllPeers listOfPeers = new AllPeers();
     public ServerSocket serverSocket;
     private boolean isStopped = false;
 
