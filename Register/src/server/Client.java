@@ -5,7 +5,6 @@ import util.FileWritter;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Client implements Runnable{

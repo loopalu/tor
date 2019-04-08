@@ -60,7 +60,7 @@ public class Register implements Runnable {
         try {
             this.serverSocket = new ServerSocket(this.port);
         } catch (IOException e) {
-            throw new RuntimeException("Cannot open port 8080", e);
+            throw new RuntimeException("Cannot open port " + port, e);
         }
     }
 
