@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class Register implements Runnable {
 
     private int port;
-    public static ArrayList<String> listOfIps = new ArrayList<>();
+    public static AllPeers listOfPeers;
     public ServerSocket serverSocket;
     private boolean isStopped = false;
 
