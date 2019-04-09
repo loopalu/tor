@@ -41,8 +41,8 @@ public class Client implements Runnable{
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                         conn.setRequestMethod("GET");
                         conn.setRequestProperty("Content-Type", "text/plain");
-                        conn.setRequestProperty("veebiaadress", urlString);
-                        conn.setRequestProperty("messageid",time);
+                        conn.setRequestProperty("url", urlString);
+                        conn.setRequestProperty("id",time);
                         conn.setRequestProperty("timetolive", String.valueOf(10));
                         conn.setRequestProperty("ip", String.valueOf(ip));
                         conn.setDoOutput(true);

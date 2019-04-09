@@ -3,7 +3,7 @@ package server;
 public class PostPackage {
     private Integer status;
     private String mimetype;
-    private String messageid;
+    private String id;
     private Integer timetolive;
     private String content;
     private String fileType;
@@ -24,12 +24,12 @@ public class PostPackage {
         this.mimetype = mimetype;
     }
 
-    public String getMessageid() {
-        return messageid;
+    public String getId() {
+        return id;
     }
 
-    public void setMessageid(String messageid) {
-        this.messageid = messageid;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getContent() {
@@ -42,7 +42,7 @@ public class PostPackage {
 
     @Override
     public String toString() {
-        return "PostPackage [status=" + status + ", mimetype=" + mimetype + ", messageid=" + messageid
+        return "PostPackage [status=" + status + ", mimetype=" + mimetype + ", id=" + id
                 + ", timetolive=" + timetolive + ", content=" + content + ", filetype=" + fileType + "]";
     }
 

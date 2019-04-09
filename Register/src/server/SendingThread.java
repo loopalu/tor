@@ -8,7 +8,6 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
@@ -24,7 +23,7 @@ public class SendingThread implements Runnable {
     private double lazyness;
     private String getData;
     private String requestMethod;
-    private String messageId;
+    private String id;
     private Integer timeToLive;
 
     SendingThread(int port, ArrayList<String> httpText, String postData) {
@@ -68,11 +67,11 @@ public class SendingThread implements Runnable {
         System.out.println("GET - forward");
         System.out.println("Lazyness: "+ lazyness);
         for (String string : httpText) {
-            if (string.contains("veebiaadress")) {
+            if (string.contains("url")) {
                 this.getData = string.substring(14);
             }
-            if (string.contains("messageid")) {
-                this.messageId = string.substring(11);
+            if (string.contains("id")) {
+                this.id = string.substring(4);
             }
             if (string.contains("timetolive")) {
                 this.timeToLive = Integer.valueOf(string.substring(12));
@@ -81,14 +80,14 @@ public class SendingThread implements Runnable {
         if (timeToLive != null) {
             if (timeToLive > 0) {
                 //System.out.println(getData);
-                //System.out.println(messageId);
+                //System.out.println(id);
                 for (String neighbor : ClientAndServer.getNeighbours()) {
                     URL url = new URL("http://localhost:"+neighbor);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("GET");
                     conn.setRequestProperty("Content-Type", "text/plain");
-                    conn.setRequestProperty("veebiaadress", getData);
-                    conn.setRequestProperty("messageid",messageId);
+                    conn.setRequestProperty("url", getData);
+                    conn.setRequestProperty("id", id);
                     conn.setRequestProperty("timetolive", String.valueOf(timeToLive-1));
                     conn.setDoOutput(true);
                     Reader inasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
@@ -106,13 +105,13 @@ public class SendingThread implements Runnable {
         //System.out.println(postData);
         //System.out.println(httpText);
         PostPackage postPackage = mapper.readValue(postData, PostPackage.class);
-        String id = postPackage.getMessageid();
+        this.id = postPackage.getId();
         Integer timetolive = postPackage.getTimetolive();
         if (timetolive != null) {
             if (timetolive > 0) {
-                ArrayList<String> myRequests = FileReader.read(Integer.valueOf(port));
-                for (String request : myRequests) {
-                    if (request.equals(id)) {
+                ArrayList<String> myRequestsIds = FileReader.read(Integer.valueOf(port));
+                for (String requestId : myRequestsIds) {
+                    if (requestId.equals(id)) {
                         myRequest = true;
                         break;
                     }
@@ -152,25 +151,25 @@ public class SendingThread implements Runnable {
         System.out.println("Lazyness: "+ lazyness);
         ObjectMapper mapper1 = new ObjectMapper();
         for (String string : httpText) {
-            if (string.contains("veebiaadress")) {
+            if (string.contains("url")) {
                 this.getData = URLDecoder.decode(string.substring((14)));
             }
-            if (string.contains("messageid")) {
-                this.messageId = string.substring(11);
+            if (string.contains("id")) {
+                this.id = string.substring(11);
             }
         }
 
         boolean myRequest = false;
         ArrayList<String> myRequests = FileReader.read(Integer.valueOf(port));
         for (String request : myRequests) {
-            if (request.equals(messageId)) {
+            if (request.equals(id)) {
                 myRequest = true;
                 break;
             }
         }
         if (!myRequest) {
             //System.out.println(getData);
-            //System.out.println(messageId);
+            //System.out.println(id);
             String fileType;
             if (getData.contains(".jpg")) {
                 fileType = "jpg";
@@ -331,7 +330,7 @@ public class SendingThread implements Runnable {
                 PostPackage postPackage = new PostPackage();
                 postPackage.setStatus(200);
                 postPackage.setMimetype("text/html");
-                postPackage.setMessageid(messageId);
+                postPackage.setId(id);
                 postPackage.setTimetolive(20);
                 postPackage.setFileType(fileType);
                 postPackage.setContent(encodedString);
