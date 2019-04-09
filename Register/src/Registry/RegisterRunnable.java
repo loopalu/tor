@@ -25,11 +25,15 @@ public class RegisterRunnable implements Runnable{
             BufferedReader in = new BufferedReader(new InputStreamReader(input));
             String line;
             line = in.readLine();
-            line = "";
+            System.out.println(line);
 
+
+
+            /*line = "";
             // looks for post data
             int postDataI = -1;
             while ((line = in.readLine()) != null && (line.length() != 0)) {
+                System.out.println(line);
                 if (line.contains("Content-Length:")) {
                     postDataI = new Integer(
                             line.substring(
@@ -70,6 +74,7 @@ public class RegisterRunnable implements Runnable{
             String ip = (String) test.get("ip");
             String message;
 
+            */
             //Compiles a message to send back based on information gotten from the body of message received.
             if (actionNeeded.equals("Enter") && test.get("ip") != null ) {
                 message = actionEnter(ip);

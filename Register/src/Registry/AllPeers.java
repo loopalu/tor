@@ -1,7 +1,6 @@
 package Registry;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class AllPeers {
     private ArrayList<String> peers = new ArrayList<>();
