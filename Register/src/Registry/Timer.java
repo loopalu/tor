@@ -35,7 +35,7 @@ public class Timer implements Runnable{
             if (i.length() <= 5) {
                 str = "http://localhost:" + i + "/";
             } else {
-                str = "http://" + i + "/";
+                str = "http://" + i + ":1215/";
             }
             try {
                 URL urlServer = new URL(str);
