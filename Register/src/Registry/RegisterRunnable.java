@@ -71,18 +71,18 @@ public class RegisterRunnable implements Runnable{
         //Code to take 2 random ip-s from listOfIps and send them back. Wont run until at least 3 people have entered
     private String actionEnter(String ip) {
         String message;
-        if (!Register.listOfPeers.existsPeer(ip)) {
-            Register.listOfPeers.addPeers(ip);
+        if (!Register.listOfPeers.contains(ip)) {
+            Register.listOfPeers.add(ip);
         }
         while (true) {
             System.out.println(Register.listOfPeers);
-            if (Register.listOfPeers.getPeers().size() > 2) {
+            if (Register.listOfPeers.size() > 2) {
                 String[] ips = new String[2];
                 int n = 0;
                 while (n < 2) {
-                    int rnd = new Random().nextInt(Register.listOfPeers.getPeers().size());
-                    if (!Register.listOfPeers.getPeers().get(rnd).equals(ip) && !(Arrays.asList(ips).contains(Register.listOfPeers.getPeers().get(rnd)))) {
-                        ips[n] = Register.listOfPeers.getPeers().get(rnd);
+                    int rnd = new Random().nextInt(Register.listOfPeers.size());
+                    if (!Register.listOfPeers.get(rnd).equals(ip) && !(Arrays.asList(ips).contains(Register.listOfPeers.get(rnd)))) {
+                        ips[n] = Register.listOfPeers.get(rnd);
                         n += 1;
                     }
                 }

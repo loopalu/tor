@@ -105,4 +105,7 @@ public class Client implements Runnable{
         String[] arr = ipString.split(",");
         neighbors = new ArrayList<>(Arrays.asList(arr));
     }
+
+
+
 }
