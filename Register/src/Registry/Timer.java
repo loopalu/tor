@@ -29,7 +29,7 @@ public class Timer implements Runnable{
     //Function to check all the ips in listOfIps and ping them to see if they there, if not deletes them from list
     private void serviceRemove() {
         String str;
-        ArrayList<String> arr = new ArrayList<>(Register.listOfPeers);
+        ArrayList<String> arr = new ArrayList<>(Register.listOfPeers.getPeers());
         for (String i : arr) {
             System.out.println(i);
             if (i.length() <= 5) {
@@ -44,10 +44,10 @@ public class Timer implements Runnable{
                 if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     continue;
                 } else {
-                    Register.listOfPeers.remove(i);
+                    Register.listOfPeers.removePeer(i);
                 }
             } catch (IOException e) {
-                Register.listOfPeers.remove(i);
+                Register.listOfPeers.removePeer(i);
             }
         }
 
