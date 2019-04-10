@@ -18,11 +18,13 @@ public class Client implements Runnable{
     private boolean isRunning;
     private String myIp;
     private static ArrayList<String> neighbors = new ArrayList<>();
+    private Integer port;
 
-    Client(String myIp, String registryIp) {
+    Client(String myIp, String registryIp, Integer port) {
         this.isRunning = true;
         this.myIp = myIp;
         this.registryIP = registryIp;
+        this.port = port;
     }
 
     public static ArrayList<String> getNeighbours() {
@@ -31,8 +33,9 @@ public class Client implements Runnable{
 
     public void run() {
         System.out.println("Client started");
+        ClientListener clientListener = new ClientListener(port);
+        new Thread(clientListener).start();
         makeRequest();
-        //ClientListner Siit Toole
         try {
             setNeighbors();
         } catch (IOException e) {
@@ -45,8 +48,8 @@ public class Client implements Runnable{
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
-
         }
+        clientListener.stop();
     }
 
     synchronized void stop() {
@@ -98,7 +101,7 @@ public class Client implements Runnable{
             }
             String time = String.valueOf(System.currentTimeMillis());
             try {
-                FileWritter.write(this.myIp, time);
+                FileWritter.write(String.valueOf(this.port), time);
             } catch (IOException e) {
                 e.printStackTrace();
             }
