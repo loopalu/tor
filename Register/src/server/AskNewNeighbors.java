@@ -14,7 +14,7 @@ public class AskNewNeighbors implements Runnable {
         try {
             while (isRunning) {
                 Client.setNeighbors();
-                Thread.sleep(300 * 1000);
+                Thread.sleep(60 * 1000);
             }
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
