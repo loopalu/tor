@@ -14,15 +14,15 @@ import java.util.Scanner;
 
 public class Client implements Runnable{
 
-    private static String RegistryIP;
+    private String registryIP;
     private boolean isRunning;
-    private static String myIp;
+    private String myIp;
     private static ArrayList<String> neighbors = new ArrayList<>();
 
-    Client(String myIp, String RegistryIp) {
+    Client(String myIp, String registryIp) {
         this.isRunning = true;
-        Client.myIp = myIp;
-        RegistryIP = RegistryIp;
+        this.myIp = myIp;
+        this.registryIP = registryIp;
     }
 
     public void run() {
@@ -40,7 +40,7 @@ public class Client implements Runnable{
             }
             String time = String.valueOf(System.currentTimeMillis());
             try {
-                FileWritter.write(myIp,time);
+                FileWritter.write(this.myIp,time);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -54,7 +54,7 @@ public class Client implements Runnable{
                         conn.setRequestProperty("url", urlString);
                         conn.setRequestProperty("id",time);
                         conn.setRequestProperty("timetolive", String.valueOf(10));
-                        conn.setRequestProperty("ip", String.valueOf(myIp));
+                        conn.setRequestProperty("ip", String.valueOf(this.myIp));
                         conn.setDoOutput(true);
                         Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
                         in.close();
@@ -73,11 +73,11 @@ public class Client implements Runnable{
         this.isRunning = false;
     }
 
-    public static void setNeighbors() throws IOException {
-        URL url = new URL(RegistryIP + "/getpeers");
+    public void setNeighbors() throws IOException {
+        URL url = new URL(this.registryIP + "/getpeers");
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         conn.setRequestMethod("GET");
-        conn.setRequestProperty("ip", myIp);
+        conn.setRequestProperty("ip", this.myIp);
         conn.setRequestProperty("action", "Enter");
         conn.setDoOutput(true);
 
