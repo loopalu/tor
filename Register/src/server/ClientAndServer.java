@@ -18,7 +18,7 @@ import java.util.Arrays;
 public class ClientAndServer implements Runnable {
 
     private static int myIp;
-    private static ArrayList<String> neighbours = new ArrayList<>();
+    private ArrayList<String> neighbours = new ArrayList<>();
     private String acting;
     private Boolean isRunning;
     private String prev = "";
@@ -114,10 +114,6 @@ public class ClientAndServer implements Runnable {
             return;
         }
         String[] arr = ipString.split(",");
-        neighbours = new ArrayList<>(Arrays.asList(arr));
-    }
-
-    static ArrayList<String> getNeighbours(){
-        return neighbours;
+        this.neighbours = new ArrayList<>(Arrays.asList(arr));
     }
 }

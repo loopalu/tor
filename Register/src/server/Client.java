@@ -17,7 +17,7 @@ public class Client implements Runnable{
     private static String RegistryIP;
     private boolean isRunning;
     private static String myIp;
-    public static ArrayList<String> neighbors = new ArrayList<>();
+    private static ArrayList<String> neighbors = new ArrayList<>();
 
     Client(String myIp, String RegistryIp) {
         this.isRunning = true;
@@ -44,7 +44,7 @@ public class Client implements Runnable{
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (ClientAndServer.getNeighbours().size() >= 2){
+            if (neighbors.size() >= 2){
                 for (String i : neighbors) {
                     try {
                         URL url = new URL(i);
@@ -105,7 +105,4 @@ public class Client implements Runnable{
         String[] arr = ipString.split(",");
         neighbors = new ArrayList<>(Arrays.asList(arr));
     }
-
-
-
 }
