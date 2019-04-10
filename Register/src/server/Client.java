@@ -10,15 +10,14 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Scanner;
 
 public class Client implements Runnable{
 
     private String registryIP;
     private boolean isRunning;
-    private String myIp;
+    private static String myIp;
     private static ArrayList<String> neighbors = new ArrayList<>();
-    private Integer port;
+    private static Integer port;
 
     Client(String myIp, String registryIp, Integer port) {
         this.isRunning = true;
@@ -35,12 +34,8 @@ public class Client implements Runnable{
         System.out.println("Client started");
         ClientListener clientListener = new ClientListener(port);
         new Thread(clientListener).start();
-        makeRequest();
-        try {
-            setNeighbors();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Sender sender = new Sender();
+        new Thread(sender).start();
         while (isRunning) {
             try {
                 setNeighbors();
@@ -50,6 +45,7 @@ public class Client implements Runnable{
             }
         }
         clientListener.stop();
+        sender.stop();
     }
 
     synchronized void stop() {
@@ -60,7 +56,7 @@ public class Client implements Runnable{
         URL url = new URL(this.registryIP + "/getpeers");
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         conn.setRequestMethod("GET");
-        conn.setRequestProperty("ip", this.myIp);
+        conn.setRequestProperty("ip", myIp);
         conn.setRequestProperty("action", "Enter");
         conn.setDoOutput(true);
 
@@ -87,45 +83,15 @@ public class Client implements Runnable{
         }
         String[] arr = ipString.split(",");
         neighbors = new ArrayList<>(Arrays.asList(arr));
+        System.out.println("Here");
+        System.out.println(neighbors);
     }
 
-    private void makeRequest() {
-        while (isRunning) {
-            Scanner reader = new Scanner(System.in);
-            System.out.println("Enter page: ");
-            String urlString = null;
-            try {
-                urlString = URLEncoder.encode(reader.nextLine(), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            String time = String.valueOf(System.currentTimeMillis());
-            try {
-                FileWritter.write(String.valueOf(this.port), time);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            if (neighbors.size() >= 2) {
-                for (String i : neighbors) {
-                    try {
-                        URL url = new URL(i);
-                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                        conn.setRequestMethod("GET");
-                        conn.setRequestProperty("Content-Type", "text/plain");
-                        conn.setRequestProperty("url", urlString);
-                        conn.setRequestProperty("id", time);
-                        conn.setRequestProperty("timetolive", String.valueOf(10));
-                        conn.setRequestProperty("ip", String.valueOf(this.myIp));
-                        conn.setDoOutput(true);
-                        Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-                        in.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            } else {
-                System.out.println("Pole piisavalt naabreid!");
-            }
-        }
+    public static Integer getPort() {
+        return port;
+    }
+
+    public static String getMyIp() {
+        return myIp;
     }
 }
