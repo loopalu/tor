@@ -3,7 +3,6 @@ package server;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import util.FileWritter;
 
 import java.io.*;
 import java.net.*;
@@ -39,7 +38,7 @@ public class Client implements Runnable{
         while (isRunning) {
             try {
                 setNeighbors();
-                Thread.sleep(60 * 1000);
+                Thread.sleep(600 * 1000);
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -83,8 +82,6 @@ public class Client implements Runnable{
         }
         String[] arr = ipString.split(",");
         neighbors = new ArrayList<>(Arrays.asList(arr));
-        System.out.println("Here");
-        System.out.println(neighbors);
     }
 
     public static Integer getPort() {
