@@ -81,8 +81,8 @@ public class SendingThread implements Runnable {
             if (timeToLive > 0) {
                 //System.out.println(getData);
                 //System.out.println(id);
-                for (String neighbor : ClientAndServer.getNeighbours()) {
-                    URL url = new URL("http://localhost:"+neighbor);
+                for (String neighbor : Client.getNeighbours()) {
+                    URL url = new URL(neighbor);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("GET");
                     conn.setRequestProperty("Content-Type", "text/plain");
@@ -129,8 +129,8 @@ public class SendingThread implements Runnable {
                     timeToLive = postPackage.getTimetolive() - 1;
                     postPackage.setTimetolive(timeToLive);
                     String forward = mapper.writeValueAsString(postPackage);
-                    for (String neighbor : ClientAndServer.getNeighbours()) {
-                        URL url = new URL("http://localhost:"+neighbor);
+                    for (String neighbor : Client.getNeighbours()) {
+                        URL url = new URL(neighbor);
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                         conn.setRequestMethod("POST");
                         conn.setRequestProperty("Content-Type", "application/json");
@@ -326,7 +326,7 @@ public class SendingThread implements Runnable {
             byte[] fileContent = FileUtils.readFileToByteArray(inputFile);
             String encodedString = Base64.getEncoder().encodeToString(fileContent);
 
-            for (String neighbor : ClientAndServer.getNeighbours()) {
+            for (String neighbor : Client.getNeighbours()) {
                 PostPackage postPackage = new PostPackage();
                 postPackage.setStatus(200);
                 postPackage.setMimetype("text/html");
@@ -337,7 +337,7 @@ public class SendingThread implements Runnable {
                 String outData = mapper1.writeValueAsString(postPackage);
                 System.out.println(outData);
 
-                URL url = new URL("http://localhost:"+neighbor);
+                URL url = new URL(neighbor);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json");

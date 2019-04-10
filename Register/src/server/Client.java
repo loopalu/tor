@@ -25,55 +25,35 @@ public class Client implements Runnable{
         this.registryIP = registryIp;
     }
 
+    public static ArrayList<String> getNeighbours() {
+        return neighbors;
+    }
+
     public void run() {
         System.out.println("Client started");
+        makeRequest();
         //ClientListner Siit Toole
-        new Thread(new AskNewNeighbors()).start();
-        while (isRunning) {
-            Scanner reader = new Scanner(System.in);
-            System.out.println("Enter page: ");
-            String urlString = null;
-            try {
-                urlString = URLEncoder.encode(reader.nextLine(), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            String time = String.valueOf(System.currentTimeMillis());
-            try {
-                FileWritter.write(this.myIp,time);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            if (neighbors.size() >= 2){
-                for (String i : neighbors) {
-                    try {
-                        URL url = new URL(i);
-                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                        conn.setRequestMethod("GET");
-                        conn.setRequestProperty("Content-Type", "text/plain");
-                        conn.setRequestProperty("url", urlString);
-                        conn.setRequestProperty("id",time);
-                        conn.setRequestProperty("timetolive", String.valueOf(10));
-                        conn.setRequestProperty("ip", String.valueOf(this.myIp));
-                        conn.setDoOutput(true);
-                        Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-                        in.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            } else {
-                System.out.println("Pole piisavalt naabreid!");
-            }
+        try {
+            setNeighbors();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        AskNewNeighbors.stop();
+        while (isRunning) {
+            try {
+                setNeighbors();
+                Thread.sleep(60 * 1000);
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
     synchronized void stop() {
         this.isRunning = false;
     }
 
-    public void setNeighbors() throws IOException {
+    private void setNeighbors() throws IOException {
         URL url = new URL(this.registryIP + "/getpeers");
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         conn.setRequestMethod("GET");
@@ -104,5 +84,45 @@ public class Client implements Runnable{
         }
         String[] arr = ipString.split(",");
         neighbors = new ArrayList<>(Arrays.asList(arr));
+    }
+
+    private void makeRequest() {
+        while (isRunning) {
+            Scanner reader = new Scanner(System.in);
+            System.out.println("Enter page: ");
+            String urlString = null;
+            try {
+                urlString = URLEncoder.encode(reader.nextLine(), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            String time = String.valueOf(System.currentTimeMillis());
+            try {
+                FileWritter.write(this.myIp, time);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (neighbors.size() >= 2) {
+                for (String i : neighbors) {
+                    try {
+                        URL url = new URL(i);
+                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                        conn.setRequestMethod("GET");
+                        conn.setRequestProperty("Content-Type", "text/plain");
+                        conn.setRequestProperty("url", urlString);
+                        conn.setRequestProperty("id", time);
+                        conn.setRequestProperty("timetolive", String.valueOf(10));
+                        conn.setRequestProperty("ip", String.valueOf(this.myIp));
+                        conn.setDoOutput(true);
+                        Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+                        in.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                System.out.println("Pole piisavalt naabreid!");
+            }
+        }
     }
 }
