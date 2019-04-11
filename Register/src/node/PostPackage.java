@@ -24,19 +24,19 @@ public class PostPackage {
         this.mimetype = mimetype;
     }
 
-    public String getId() {
+    String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    void setId(String id) {
         this.id = id;
     }
 
-    public String getContent() {
+    String getContent() {
         return content;
     }
 
-    public void setContent(String content) {
+    void setContent(String content) {
         this.content = content;
     }
 
@@ -46,19 +46,19 @@ public class PostPackage {
                 + ", timetolive=" + timetolive + ", content=" + content + ", filetype=" + fileType + "]";
     }
 
-    public Integer getTimetolive() {
+    Integer getTimetolive() {
         return timetolive;
     }
 
-    public void setTimetolive(Integer timetolive) {
+    void setTimetolive(Integer timetolive) {
         this.timetolive = timetolive;
     }
 
-    public String getFileType() {
+    String getFileType() {
         return fileType;
     }
 
-    public void setFileType(String fileType) {
+    void setFileType(String fileType) {
         this.fileType = fileType;
     }
 }

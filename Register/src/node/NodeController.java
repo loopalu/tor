@@ -25,7 +25,7 @@ public class NodeController implements Runnable{
         this.port = port;
     }
 
-    public static ArrayList<String> getNeighbours() {
+    static ArrayList<String> getNeighbours() {
         return neighbors;
     }
 
@@ -84,11 +84,11 @@ public class NodeController implements Runnable{
         neighbors = new ArrayList<>(Arrays.asList(arrayOfNeigbors));
     }
 
-    public static Integer getPort() {
+    static Integer getPort() {
         return port;
     }
 
-    public static String getMyIp() {
+    static String getMyIp() {
         return myIp;
     }
 }

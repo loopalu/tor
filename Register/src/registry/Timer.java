@@ -10,7 +10,7 @@ public class Timer implements Runnable{
 
     private static boolean isRunning = true;
 
-    public static void stop() {
+    static void stop() {
         isRunning = false;
     }
 

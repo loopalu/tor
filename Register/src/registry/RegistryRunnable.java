@@ -13,7 +13,7 @@ public class RegistryRunnable implements Runnable{
 
     protected Socket clientSocket;
 
-    public RegistryRunnable(Socket clientSocket) {
+    RegistryRunnable(Socket clientSocket) {
         this.clientSocket = clientSocket;
     }
 

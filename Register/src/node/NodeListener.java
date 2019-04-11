@@ -44,7 +44,7 @@ public class NodeListener implements Runnable {
         try {
             this.serverSocket = new ServerSocket(this.port, 20);
         } catch (IOException e) {
-            throw new RuntimeException("Cannot open port 9000", e);
+            throw new RuntimeException("Cannot open port " + this.port, e);
         }
 
     }
