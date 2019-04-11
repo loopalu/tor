@@ -1,4 +1,4 @@
-package Registry;
+package registry;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

@@ -1,4 +1,6 @@
-package server;
+package node;
+
+import node.Client;
 
 public class tester3 {
 

@@ -1,5 +1,6 @@
-package server;
+package node;
 
+import node.Client;
 import util.FileWritter;
 
 import java.io.*;

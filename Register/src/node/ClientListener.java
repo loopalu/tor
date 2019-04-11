@@ -1,4 +1,6 @@
-package server;
+package node;
+
+import node.SenderReceiver;
 
 import java.io.IOException;
 import java.net.ServerSocket;

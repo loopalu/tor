@@ -1,4 +1,4 @@
-package server;
+package node;
 
 public class PostPackage {
     private Integer status;

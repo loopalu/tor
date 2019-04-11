@@ -1,4 +1,4 @@
-package Registry;
+package registry;
 
 import org.json.simple.JSONObject;
 
