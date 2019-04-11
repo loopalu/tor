@@ -1,7 +1,5 @@
 package node;
 
-import node.SenderReceiver;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -31,7 +29,7 @@ public class NodeListener implements Runnable {
                 throw new RuntimeException(
                         "Error accepting client connection", e);
             }
-            new Thread(new SenderReceiver(port, clientSocket)).start();
+            new Thread(new ListenerThread(port, clientSocket)).start();
         }
         System.out.println("Server Stopped.");
     }

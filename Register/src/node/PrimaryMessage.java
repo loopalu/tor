@@ -9,7 +9,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
-public class Sender implements Runnable {
+public class PrimaryMessage implements Runnable {
 
     private boolean isRunning = true;
 
@@ -30,9 +30,9 @@ public class Sender implements Runnable {
                 e.printStackTrace();
             }
             if (NodeController.getNeighbours().size() >= 2) {
-                for (String i : NodeController.getNeighbours()) {
+                for (String neighbor : NodeController.getNeighbours()) {
                     try {
-                        URL url = new URL(i);
+                        URL url = new URL(neighbor);
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                         conn.setRequestMethod("GET");
                         conn.setRequestProperty("Content-Type", "text/plain");

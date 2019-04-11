@@ -4,12 +4,12 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class SenderReceiver implements Runnable {
+public class ListenerThread implements Runnable {
 
     private int port;
     private Socket clientSocket;
 
-    SenderReceiver(int port, Socket clientSocket) {
+    ListenerThread(int port, Socket clientSocket) {
         this.port = port;
         this.clientSocket = clientSocket;
     }
@@ -50,13 +50,9 @@ public class SenderReceiver implements Runnable {
             output.write(message.getBytes());
             output.close();
             input.close();
+            clientSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
-            try {
-                clientSocket.close();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
         }
     }
 }

@@ -33,8 +33,8 @@ public class NodeController implements Runnable{
         System.out.println("NodeController started");
         NodeListener nodeListener = new NodeListener(port);
         new Thread(nodeListener).start();
-        Sender sender = new Sender();
-        new Thread(sender).start();
+        PrimaryMessage primaryMessage = new PrimaryMessage();
+        new Thread(primaryMessage).start();
         while (isRunning) {
             try {
                 setNeighbors();
@@ -44,7 +44,7 @@ public class NodeController implements Runnable{
             }
         }
         nodeListener.stop();
-        sender.stop();
+        primaryMessage.stop();
     }
 
     synchronized void stop() {
