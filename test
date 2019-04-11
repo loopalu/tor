@@ -1,0 +1,27 @@
+private String actionEnter(String ip) {
+        String message;
+        Register.listOfIps.add(ip);
+        while (true) {
+            System.out.println(Register.listOfIps);
+            if (Register.listOfIps.size() > 2) {
+                String[] ips = new String[Register.listOfIps.size() - 1];
+                int n = 0;
+                for (String i : Register.listOfIps) {
+                    if (!i.equals(ip)) {
+                        ips[n] = i;
+                        n += 1;
+                    }
+                }
+                String str = String.join(",", ips);
+                System.out.println(str);
+                JSONObject body = new JSONObject();
+                body.put("ips",str);
+                message = "HTTP/1.1 200 OK\r\n" +
+                        "Content-Type: application/json\r\n" +
+                        "\r\n" +
+                        body;
+                break;
+            }
+        }
+        return message;
+    }
