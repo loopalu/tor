@@ -20,7 +20,6 @@ public class SendingThread implements Runnable {
     private String port;
     private ArrayList<String> httpText;
     private String postData;
-    private double lazyness;
     private String getData;
     private String requestMethod;
     private String id;
@@ -33,8 +32,6 @@ public class SendingThread implements Runnable {
     }
 
     public void run() {
-        //System.out.println(httpText);
-        //System.out.println(postData);
         for (String string : httpText) {
             if (string.contains("HTTP/1.1")) {
                 requestMethod = string;
@@ -64,11 +61,8 @@ public class SendingThread implements Runnable {
     }
 
     private void sendForward() throws IOException {
-        System.out.println("GET - forward");
-        System.out.println("Lazyness: "+ lazyness);
         for (String string : httpText) {
             if (string.contains("url")) {
-                System.out.println(string);
                 this.getData = string.substring(5);
             }
             if (string.contains("id")) {
@@ -80,8 +74,6 @@ public class SendingThread implements Runnable {
         }
         if (timeToLive != null) {
             if (timeToLive > 0) {
-                //System.out.println(getData);
-                //System.out.println(id);
                 for (String neighbor : NodeController.getNeighbours()) {
                     URL url = new URL(neighbor);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -100,11 +92,7 @@ public class SendingThread implements Runnable {
 
     private void sendBack() throws IOException {
         boolean myRequest = false;
-        System.out.println("POST - back");
-        System.out.println(httpText);
         ObjectMapper mapper = new ObjectMapper();
-        //System.out.println(postData);
-        //System.out.println(httpText);
         PostPackage postPackage = mapper.readValue(postData, PostPackage.class);
         id = postPackage.getId();
         Integer timetolive = postPackage.getTimetolive();
@@ -139,8 +127,8 @@ public class SendingThread implements Runnable {
                         OutputStream outputStream = conn.getOutputStream();
                         outputStream.write(forward.getBytes());
                         outputStream.close();
-                        Reader inasdasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-                        inasdasd.close();
+                        Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+                        in.close();
                     }
                 }
             }
@@ -148,16 +136,12 @@ public class SendingThread implements Runnable {
     }
 
     private void download() throws IOException {
-        System.out.println("GET - download");
-        System.out.println("Lazyness: "+ lazyness);
         ObjectMapper mapper1 = new ObjectMapper();
         for (String string : httpText) {
             if (string.contains("url")) {
-                //ma pole hetkel kindel, kas 14 on õige või peaks olema 5
                 this.getData = URLDecoder.decode(string.substring((5)));
             }
             if (string.contains("id")) {
-                //ma pole hetkel kindel, kas 11 on õige või peaks olema 4
                 this.id = string.substring(4);
             }
         }
@@ -171,8 +155,6 @@ public class SendingThread implements Runnable {
             }
         }
         if (!myRequest) {
-            //System.out.println(getData);
-            //System.out.println(id);
             String fileType;
             if (getData.contains(".jpg")) {
                 fileType = "jpg";
@@ -338,7 +320,6 @@ public class SendingThread implements Runnable {
                 postPackage.setFileType(fileType);
                 postPackage.setContent(encodedString);
                 String outData = mapper1.writeValueAsString(postPackage);
-                System.out.println(outData);
 
                 URL url = new URL(neighbor);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -348,14 +329,14 @@ public class SendingThread implements Runnable {
                 OutputStream outputStream2 = conn.getOutputStream();
                 outputStream2.write(outData.getBytes());
                 outputStream2.close();
-                Reader inasdasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-                inasdasd.close();
+                Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+                in.close();
             }
         }
     }
 
     private boolean getMyRequest() {
-        lazyness = Math.random();
+        double lazyness = Math.random();
         double chance = 0.5;
         return lazyness <= chance;
     }
