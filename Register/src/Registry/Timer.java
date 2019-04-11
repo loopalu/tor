@@ -28,26 +28,25 @@ public class Timer implements Runnable{
 
     //Function to check all the ips in listOfIps and ping them to see if they there, if not deletes them from list
     private void serviceRemove() {
-        String str;
-        ArrayList<String> arr = new ArrayList<>(Register.listOfPeers);
-        for (String i : arr) {
-            System.out.println(i);
-            if (i.length() <= 5) {
-                str = "http://localhost:" + i + "/";
+        String url;
+        ArrayList<String> copyOfListOfPeers = new ArrayList<>(Registry.listOfPeers);
+        for (String peer : copyOfListOfPeers) {
+            if (peer.length() <= 5) {
+                url = "http://localhost:" + peer + "/";
             } else {
-                str = i;
+                url = peer;
             }
             try {
-                URL urlServer = new URL(str);
+                URL urlServer = new URL(url);
                 HttpURLConnection urlConn = (HttpURLConnection) urlServer.openConnection();
                 urlConn.connect();
                 if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     continue;
                 } else {
-                    Register.listOfPeers.remove(i);
+                    Registry.listOfPeers.remove(peer);
                 }
             } catch (IOException e) {
-                Register.listOfPeers.remove(i);
+                Registry.listOfPeers.remove(peer);
             }
         }
 

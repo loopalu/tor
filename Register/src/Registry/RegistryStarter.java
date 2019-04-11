@@ -3,7 +3,7 @@ package Registry;
 public class RegistryStarter {
 
     public static void main(String[] args) {
-        Register server = new Register(1215);
+        Registry server = new Registry(1215);
         new Thread(server).start();
 
         try {

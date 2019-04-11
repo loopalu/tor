@@ -4,15 +4,16 @@ import org.json.simple.JSONObject;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
 
-public class RegisterRunnable implements Runnable{
+public class RegistryRunnable implements Runnable{
 
     protected Socket clientSocket;
 
-    public RegisterRunnable(Socket clientSocket) {
+    public RegistryRunnable(Socket clientSocket) {
         this.clientSocket = clientSocket;
     }
 
@@ -23,7 +24,6 @@ public class RegisterRunnable implements Runnable{
             BufferedReader in = new BufferedReader(new InputStreamReader(input));
             String line;
             line = in.readLine();
-            System.out.println(line);
             String message;
             String ip = "";
             String action = "";
@@ -31,10 +31,8 @@ public class RegisterRunnable implements Runnable{
                 while ((line = in.readLine()) != null && (line.length() != 0)) {
                     if (line.contains("action:")) {
                         action = line.substring(8, line.length());
-                        System.out.println(action);
                     } else if (line.contains("ip:")) {
                         ip = line.substring(4, line.length());
-                        System.out.println(ip);
                     }
                 }
                 if (action.equals("Enter") && !(ip.equals(""))) {
@@ -58,37 +56,32 @@ public class RegisterRunnable implements Runnable{
             long time = System.currentTimeMillis();
             System.out.println("Request processed: " + time);
         } catch (IOException e) {
-            //report exception somewhere.
             e.printStackTrace();
-            try {
-                clientSocket.close();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
         }
     }
 
-        //Code to take 2 random ip-s from listOfIps and send them back. Wont run until at least 3 people have entered
+    //Code to take 2 random ip-s from listOfIps and send them back. Wont run until at least 3 people have entered
     private String actionEnter(String ip) {
         String message;
-        if (!Register.listOfPeers.contains(ip)) {
-            Register.listOfPeers.add(ip);
+        if (!Registry.listOfPeers.contains(ip)) {
+            Registry.listOfPeers.add(ip);
         }
         while (true) {
-            System.out.println(Register.listOfPeers);
-            if (Register.listOfPeers.size() > 2) {
+            ArrayList<String> temporaryListOfIps = new ArrayList<>(Registry.listOfPeers);
+            System.out.println(temporaryListOfIps);
+            if (temporaryListOfIps.size() > 2) {
                 String[] ips = new String[2];
                 int n = 0;
                 while (n < 2) {
-                    int rnd = new Random().nextInt(Register.listOfPeers.size());
-                    if (!Register.listOfPeers.get(rnd).equals(ip) && !(Arrays.asList(ips).contains(Register.listOfPeers.get(rnd)))) {
-                        ips[n] = Register.listOfPeers.get(rnd);
+                    int rnd = new Random().nextInt(temporaryListOfIps.size());
+                    if (!temporaryListOfIps.get(rnd).equals(ip) && !(Arrays.asList(ips).contains(temporaryListOfIps.get(rnd)))) {
+                        ips[n] = temporaryListOfIps.get(rnd);
                         n += 1;
                     }
                 }
-                String str = String.join(",", ips);
+                String strOfIps = String.join(",", ips);
                 JSONObject body = new JSONObject();
-                body.put("ips",str);
+                body.put("ips", strOfIps);
                 message = "HTTP/1.1 200 OK\r\n" +
                         "Content-Type: application/json\r\n" +
                         "\r\n" +

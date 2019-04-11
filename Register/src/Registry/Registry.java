@@ -5,14 +5,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class Register implements Runnable {
+public class Registry implements Runnable {
 
     private int port;
     public static ArrayList<String> listOfPeers = new ArrayList<>();
     public ServerSocket serverSocket;
     private boolean isStopped = false;
 
-    public Register(int portID) {
+    public Registry(int portID) {
         this.port = portID;
     }
 
@@ -20,23 +20,18 @@ public class Register implements Runnable {
         System.out.println("Server started.");
         new Thread(new Timer()).start();
         openServerSocket();
-        while(! isStopped()){
+        while(!isStopped){
             Socket clientSocket = null;
             try {
                 clientSocket = this.serverSocket.accept();
             } catch (IOException e) {
-                if(isStopped()) {
+                if(isStopped) {
                     System.out.println("Server Stopped.") ;
                     return;
                 }
-                throw new RuntimeException(
-                        "Error accepting client connection", e);
+                throw new RuntimeException("Error accepting client connection", e);
             }
-
-            new Thread(
-                    new RegisterRunnable(
-                            clientSocket)
-            ).start();
+            new Thread(new RegistryRunnable(clientSocket)).start();
         }
         Timer.stop();
         System.out.println("Server Stopped.");
