@@ -1,11 +1,11 @@
 package registry;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 
@@ -71,23 +71,20 @@ public class RegisterRunnable implements Runnable {
         if (!Register.listOfPeers.contains(ip)) {
             Register.listOfPeers.add(ip);
         }
+
         while (true) {
             ArrayList<String> temporaryListOfIps = new ArrayList<>(Register.listOfPeers);
             System.out.println(temporaryListOfIps);
             if (temporaryListOfIps.size() > 2) {
-                String[] ips = new String[2];
-                int n = 0;
-                while (n < 2) {
-                    int rnd = new Random().nextInt(temporaryListOfIps.size());
-                    if (!temporaryListOfIps.get(rnd).equals(ip) && !(Arrays.asList(ips).contains(temporaryListOfIps.get(rnd)))) {
-                        ips[n] = temporaryListOfIps.get(rnd);
-                        n += 1;
+                JSONArray ips = new JSONArray();
+                while (ips.size() < 2) {
+                    String randomIp = temporaryListOfIps.get(new Random().nextInt(temporaryListOfIps.size()));
+                    if (!(randomIp.equals(ip)) && !(ips.contains(randomIp))) {
+                        ips.add(randomIp);
                     }
                 }
-                String strOfIps = String.join(",", ips);
                 JSONObject body = new JSONObject();
-                body.put("ips", strOfIps);
-
+                body.put("ips", ips);
                 message = "HTTP/1.1 200 OK\r\n" +
                         "Content-Type: application/json\r\n" +
                         "\r\n" +
@@ -95,6 +92,7 @@ public class RegisterRunnable implements Runnable {
                 break;
             }
         }
+
         return message;
     }
 }

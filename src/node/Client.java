@@ -1,5 +1,7 @@
 package node;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -9,6 +11,7 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Client implements Runnable{
 
@@ -73,15 +76,9 @@ public class Client implements Runnable{
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        if (ips == null) {
-            return;
-        }
-        String ipString = (String) ips.get("ips");
-        if (ipString == null) {
-            return;
-        }
-        String[] arr = ipString.split(",");
-        neighbors = new ArrayList<>(Arrays.asList(arr));
+
+        JSONArray ipString = (JSONArray) ips.get("ips");
+        neighbors = new ArrayList<>(ipString);
     }
 
     public static Integer getPort() {
