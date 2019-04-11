@@ -82,7 +82,7 @@ public class SendingThread implements Runnable {
             if (timeToLive > 0) {
                 //System.out.println(getData);
                 //System.out.println(id);
-                for (String neighbor : Client.getNeighbours()) {
+                for (String neighbor : NodeController.getNeighbours()) {
                     URL url = new URL(neighbor);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("GET");
@@ -130,7 +130,7 @@ public class SendingThread implements Runnable {
                     timeToLive = postPackage.getTimetolive() - 1;
                     postPackage.setTimetolive(timeToLive);
                     String forward = mapper.writeValueAsString(postPackage);
-                    for (String neighbor : Client.getNeighbours()) {
+                    for (String neighbor : NodeController.getNeighbours()) {
                         URL url = new URL(neighbor);
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                         conn.setRequestMethod("POST");
@@ -329,7 +329,7 @@ public class SendingThread implements Runnable {
             byte[] fileContent = FileUtils.readFileToByteArray(inputFile);
             String encodedString = Base64.getEncoder().encodeToString(fileContent);
 
-            for (String neighbor : Client.getNeighbours()) {
+            for (String neighbor : NodeController.getNeighbours()) {
                 PostPackage postPackage = new PostPackage();
                 postPackage.setStatus(200);
                 postPackage.setMimetype("text/html");

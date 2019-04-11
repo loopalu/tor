@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Client implements Runnable{
+public class NodeController implements Runnable{
 
     private String registryIP;
     private boolean isRunning;
@@ -18,9 +18,9 @@ public class Client implements Runnable{
     private static ArrayList<String> neighbors = new ArrayList<>();
     private static Integer port;
 
-    Client(String myIp, String registryIp, Integer port) {
+    NodeController(String myIp, String registryIp, Integer port) {
         this.isRunning = true;
-        this.myIp = myIp;
+        this.myIp = myIp + ":" + port;
         this.registryIP = registryIp;
         this.port = port;
     }
@@ -30,9 +30,9 @@ public class Client implements Runnable{
     }
 
     public void run() {
-        System.out.println("Client started");
-        ClientListener clientListener = new ClientListener(port);
-        new Thread(clientListener).start();
+        System.out.println("NodeController started");
+        NodeListener nodeListener = new NodeListener(port);
+        new Thread(nodeListener).start();
         Sender sender = new Sender();
         new Thread(sender).start();
         while (isRunning) {
@@ -43,7 +43,7 @@ public class Client implements Runnable{
                 e.printStackTrace();
             }
         }
-        clientListener.stop();
+        nodeListener.stop();
         sender.stop();
     }
 
@@ -61,15 +61,15 @@ public class Client implements Runnable{
 
         Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
 
-        StringBuilder str = new StringBuilder();
+        StringBuilder neighborString = new StringBuilder();
         for (int c; (c = in.read()) >= 0;) {
-            str.append((char) c);
+            neighborString.append((char) c);
         }
-        String finString = str.toString();
+        String outputString = neighborString.toString();
         JSONParser parser = new JSONParser();
         JSONObject ips = null;
         try {
-            ips = (JSONObject)parser.parse(finString);
+            ips = (JSONObject)parser.parse(outputString);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -80,8 +80,8 @@ public class Client implements Runnable{
         if (ipString == null) {
             return;
         }
-        String[] arr = ipString.split(",");
-        neighbors = new ArrayList<>(Arrays.asList(arr));
+        String[] arrayOfNeigbors = ipString.split(",");
+        neighbors = new ArrayList<>(Arrays.asList(arrayOfNeigbors));
     }
 
     public static Integer getPort() {

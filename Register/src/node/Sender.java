@@ -1,6 +1,5 @@
 package node;
 
-import node.Client;
 import util.FileWritter;
 
 import java.io.*;
@@ -26,12 +25,12 @@ public class Sender implements Runnable {
             }
             String time = String.valueOf(System.currentTimeMillis());
             try {
-                FileWritter.write(String.valueOf(Client.getPort()), time);
+                FileWritter.write(String.valueOf(NodeController.getPort()), time);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (Client.getNeighbours().size() >= 2) {
-                for (String i : Client.getNeighbours()) {
+            if (NodeController.getNeighbours().size() >= 2) {
+                for (String i : NodeController.getNeighbours()) {
                     try {
                         URL url = new URL(i);
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -40,7 +39,7 @@ public class Sender implements Runnable {
                         conn.setRequestProperty("url", urlString);
                         conn.setRequestProperty("id",time);
                         conn.setRequestProperty("timetolive", String.valueOf(10));
-                        conn.setRequestProperty("ip", String.valueOf(Client.getMyIp()));
+                        conn.setRequestProperty("ip", String.valueOf(NodeController.getMyIp()));
                         conn.setDoOutput(true);
                         Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
                         in.close();
