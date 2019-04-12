@@ -1,8 +1,14 @@
 # tor
 
-*Download puudu
+*Tutorial, kuidas käivitada programmi.....
 
-*Ei tohi olla seda Registry, kaob P2P mõte ära
+1.
 
-*Pmts üks ja see sama kood jookseb igal kliendil, cloned
+2.
+
+3.
+
+4.
+
+...
 
