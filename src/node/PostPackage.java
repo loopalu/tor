@@ -3,7 +3,6 @@ package node;
 public class PostPackage {
     private Integer status;
     private String mimetype;
-    private String id;
     private Integer timetolive;
     private String content;
     private String fileType;
@@ -24,14 +23,6 @@ public class PostPackage {
         this.mimetype = mimetype;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getContent() {
         return content;
     }
@@ -42,7 +33,7 @@ public class PostPackage {
 
     @Override
     public String toString() {
-        return "PostPackage [status=" + status + ", mimetype=" + mimetype + ", id=" + id
+        return "PostPackage [status=" + status + ", mimetype=" + mimetype
                 + ", timetolive=" + timetolive + ", content=" + content + ", filetype=" + fileType + "]";
     }
 
