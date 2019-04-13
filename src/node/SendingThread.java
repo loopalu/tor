@@ -22,7 +22,7 @@ public class SendingThread implements Runnable {
     private String postData;
     private String getData;
     private String requestMethod;
-    private String messageId;
+    private String id;
     private Integer timeToLive;
 
     SendingThread(int port, ArrayList<String> httpText, String postData) {
@@ -68,7 +68,7 @@ public class SendingThread implements Runnable {
                 this.getData = string.substring(5);
             }
             if (string.contains("id")) {
-                this.messageId = string.substring(4);
+                this.id = string.substring(4);
             }
             if (string.contains("timetolive")) {
                 this.timeToLive = Integer.valueOf(string.substring(12));
@@ -82,7 +82,7 @@ public class SendingThread implements Runnable {
                     conn.setRequestMethod("GET");
                     conn.setRequestProperty("Content-Type", "text/plain");
                     conn.setRequestProperty("url", getData);
-                    conn.setRequestProperty("id",messageId);
+                    conn.setRequestProperty("id", id);
                     conn.setRequestProperty("timetolive", String.valueOf(timeToLive-1));
                     conn.setDoOutput(true);
                     Reader inasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
@@ -97,7 +97,7 @@ public class SendingThread implements Runnable {
         System.out.println("POST - back");
         for (String string : httpText) {
             if (string.contains("id")) {
-                this.messageId = string.substring(4);
+                this.id = string.substring(4);
             }
             if (string.contains("timetolive")) {
                 this.timeToLive = Integer.valueOf(string.substring(12));
@@ -112,8 +112,8 @@ public class SendingThread implements Runnable {
             if (timetolive > 0) {
                 ArrayList<String> myRequests = FileReader.read(Integer.valueOf(port));
                 for (String request : myRequests) {
-                    System.out.println(messageId + " " + request);
-                    if (request.equals(messageId)) {
+                    System.out.println(id + " " + request);
+                    if (request.equals(id)) {
                         myRequest = true;
                         break;
                     }
@@ -136,7 +136,7 @@ public class SendingThread implements Runnable {
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                         conn.setRequestMethod("POST");
                         conn.setRequestProperty("Content-Type", "application/json");
-                        conn.setRequestProperty("id", messageId);
+                        conn.setRequestProperty("id", id);
                         conn.setDoOutput(true);
                         OutputStream outputStream = conn.getOutputStream();
                         outputStream.write(forward.getBytes());
@@ -158,14 +158,14 @@ public class SendingThread implements Runnable {
                 this.getData = URLDecoder.decode(string.substring((5)));
             }
             if (string.contains("id")) {
-                this.messageId = string.substring(4);
+                this.id = string.substring(4);
             }
         }
 
         boolean myRequest = false;
         ArrayList<String> myRequests = FileReader.read(Integer.valueOf(port));
         for (String request : myRequests) {
-            if (request.equals(messageId)) {
+            if (request.equals(id)) {
                 myRequest = true;
                 break;
             }
@@ -225,7 +225,7 @@ public class SendingThread implements Runnable {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json");
-                conn.setRequestProperty("id", messageId);
+                conn.setRequestProperty("id", id);
                 conn.setDoOutput(true);
                 OutputStream outputStream2 = conn.getOutputStream();
                 outputStream2.write(outData.getBytes());
