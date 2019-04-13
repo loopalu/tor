@@ -42,7 +42,6 @@ public class Sender implements Runnable {
                         conn.setRequestProperty("url", urlString);
                         conn.setRequestProperty("id",time);
                         conn.setRequestProperty("timetolive", String.valueOf(10));
-                        conn.setRequestProperty("ip", String.valueOf(Client.getMyIp()));
                         conn.setDoOutput(true);
                         Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
                         in.close();
