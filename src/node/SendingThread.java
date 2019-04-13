@@ -64,7 +64,7 @@ public class SendingThread implements Runnable {
         System.out.println("GET - forward");
         for (String string : httpText) {
             if (string.contains("url")) {
-                //System.out.println(string);
+                System.out.println(string);
                 this.getData = string.substring(5);
             }
             if (string.contains("id")) {
@@ -152,6 +152,7 @@ public class SendingThread implements Runnable {
     private void download() throws IOException {
         System.out.println("GET - download");
         ObjectMapper mapper1 = new ObjectMapper();
+        System.out.println(httpText);
         for (String string : httpText) {
             if (string.contains("url")) {
                 this.getData = URLDecoder.decode(string.substring((5)));
