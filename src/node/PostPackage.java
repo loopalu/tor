@@ -3,7 +3,6 @@ package node;
 public class PostPackage {
     private Integer status;
     private String mimetype;
-    private Integer timetolive;
     private String content;
     private String fileType;
 
@@ -34,15 +33,7 @@ public class PostPackage {
     @Override
     public String toString() {
         return "PostPackage [status=" + status + ", mimetype=" + mimetype
-                + ", timetolive=" + timetolive + ", content=" + content + ", filetype=" + fileType + "]";
-    }
-
-    public Integer getTimetolive() {
-        return timetolive;
-    }
-
-    public void setTimetolive(Integer timetolive) {
-        this.timetolive = timetolive;
+                + ", content=" + content + ", filetype=" + fileType + "]";
     }
 
     public String getFileType() {

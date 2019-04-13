@@ -105,11 +105,8 @@ public class SendingThread implements Runnable {
         }
         //System.out.println(httpText);
         ObjectMapper mapper = new ObjectMapper();
-        //System.out.println(postData);
-        PostPackage postPackage = mapper.readValue(postData, PostPackage.class);
-        Integer timetolive = postPackage.getTimetolive();
-        if (timetolive != null) {
-            if (timetolive > 0) {
+        if (timeToLive != null) {
+            if (timeToLive > 0) {
                 ArrayList<String> myRequests = FileReader.read(Integer.valueOf(port));
                 for (String request : myRequests) {
                     System.out.println(id + " " + request);
@@ -119,6 +116,7 @@ public class SendingThread implements Runnable {
                     }
                 }
                 if (myRequest) {
+                    PostPackage postPackage = mapper.readValue(postData, PostPackage.class);
                     String fileType = postPackage.getFileType();
                     String encodedString = postPackage.getContent();
                     byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
@@ -128,18 +126,17 @@ public class SendingThread implements Runnable {
                     outputStream2.write(decodedBytes);
                     outputStream2.close();
                 } else {
-                    timeToLive = postPackage.getTimetolive() - 1;
-                    postPackage.setTimetolive(timeToLive);
-                    String forward = mapper.writeValueAsString(postPackage);
+                    timeToLive -= 1;
                     for (String neighbor : Client.getNeighbours()) {
                         URL url = new URL(neighbor);
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                         conn.setRequestMethod("POST");
                         conn.setRequestProperty("Content-Type", "application/json");
                         conn.setRequestProperty("id", id);
+                        conn.setRequestProperty("timetolive", String.valueOf(timeToLive));
                         conn.setDoOutput(true);
                         OutputStream outputStream = conn.getOutputStream();
-                        outputStream.write(forward.getBytes());
+                        outputStream.write(postData.getBytes());
                         outputStream.close();
                         Reader inasdasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
                         inasdasd.close();
@@ -153,6 +150,7 @@ public class SendingThread implements Runnable {
         System.out.println("GET - download");
         ObjectMapper mapper1 = new ObjectMapper();
         System.out.println(httpText);
+
         for (String string : httpText) {
             if (string.contains("url")) {
                 this.getData = URLDecoder.decode(string.substring((5)));
@@ -180,8 +178,6 @@ public class SendingThread implements Runnable {
                 fileType = "gif";
             } else if (getData.contains(".txt")) {
                 fileType = "txt";
-            } else if (getData.contains(".htm")) {
-                fileType = "htm";
             } else if (getData.contains(".html")) {
                 fileType = "html";
             } else if (getData.contains(".rar")) {
@@ -190,8 +186,6 @@ public class SendingThread implements Runnable {
                 fileType = "zip";
             } else if (getData.contains(".bmp")) {
                 fileType = "bmp";
-            } else if (getData.contains(".ico")) {
-                fileType = "ico";
             } else if (getData.contains(".jpeg")) {
                 fileType = "jpeg";
             } else if (getData.contains(".png")) {
@@ -215,7 +209,6 @@ public class SendingThread implements Runnable {
                 PostPackage postPackage = new PostPackage();
                 postPackage.setStatus(200);
                 postPackage.setMimetype("text/html");
-                postPackage.setTimetolive(20);
                 postPackage.setFileType(fileType);
                 postPackage.setContent(encodedString);
                 String outData = mapper1.writeValueAsString(postPackage);
@@ -225,6 +218,7 @@ public class SendingThread implements Runnable {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("timetolive", "20");
                 conn.setRequestProperty("id", id);
                 conn.setDoOutput(true);
                 OutputStream outputStream2 = conn.getOutputStream();
