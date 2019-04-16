@@ -59,17 +59,14 @@ public class Client implements Runnable{
         conn.setRequestProperty("action", "Enter");
         conn.setDoOutput(true);
 
-        Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
 
-        StringBuilder str = new StringBuilder();
-        for (int c; (c = in.read()) >= 0;) {
-            str.append((char) c);
-        }
-        String finString = str.toString();
+        String line = in.readLine();
+
         JSONParser parser = new JSONParser();
         JSONObject ips = null;
         try {
-            ips = (JSONObject)parser.parse(finString);
+            ips = (JSONObject)parser.parse(line);
         } catch (ParseException e) {
             e.printStackTrace();
         }
