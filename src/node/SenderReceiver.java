@@ -14,6 +14,9 @@ public class SenderReceiver implements Runnable {
         this.clientSocket = clientSocket;
     }
 
+    /**
+     * Run SenderReceiver to receive post data
+     */
     public void run() {
         try {
             InputStream input  = clientSocket.getInputStream();

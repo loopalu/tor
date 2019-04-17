@@ -14,7 +14,7 @@ public class Sender implements Runnable {
     private boolean isRunning = true;
 
     /**
-     *
+     * Run Sender and start asking client what to send to neighbours
      */
     public void run() {
         while (isRunning) {

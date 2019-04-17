@@ -29,6 +29,9 @@ public class Client implements Runnable{
         return neighbors;
     }
 
+    /**
+     * Start Client
+     */
     public void run() {
         System.out.println("Client started");
         ClientListener clientListener = new ClientListener(port);
@@ -51,6 +54,10 @@ public class Client implements Runnable{
         this.isRunning = false;
     }
 
+    /**
+     * Set 2 neighbours for Client
+     * @throws IOException
+     */
     private void setNeighbors() throws IOException {
         URL url = new URL(this.registryIP + "/getpeers");
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
@@ -75,10 +82,18 @@ public class Client implements Runnable{
         neighbors = new ArrayList<>(ipString);
     }
 
+    /**
+     * Get my port
+     * @return
+     */
     public static Integer getPort() {
         return port;
     }
 
+    /**
+     * Get my ip address
+     * @return
+     */
     public static String getMyIp() {
         return myIp;
     }

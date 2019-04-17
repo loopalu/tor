@@ -15,6 +15,9 @@ public class ClientListener implements Runnable {
     }
 
 
+    /**
+     * Run ClientListener on port
+     */
     public void run() {
         openServerSocket();
         while (isRunning) {
@@ -38,6 +41,9 @@ public class ClientListener implements Runnable {
         this.isRunning = false;
     }
 
+    /**
+     * Check if port is available and set port
+     */
     private void openServerSocket() {
         try {
             this.serverSocket = new ServerSocket(this.port, 20);

@@ -35,6 +35,9 @@ public class SendingThread implements Runnable {
         this.postData = postData;
     }
 
+    /**
+     * Run SendingThread and check if Post or Get method
+     */
     public void run() {
         for (String string : httpText) {
             if (string.contains("HTTP/1.1")) {
@@ -64,6 +67,10 @@ public class SendingThread implements Runnable {
         }
     }
 
+    /**
+     * Forward to neighbours
+     * @throws IOException
+     */
     private void sendForward() throws IOException {
         System.out.println("GET - forward");
         for (String string : httpText) {
@@ -95,6 +102,10 @@ public class SendingThread implements Runnable {
         }
     }
 
+    /**
+     * Send back Post method respond
+     * @throws IOException
+     */
     private void sendBack() throws IOException {
         boolean myRequest = false;
         System.out.println("POST - back");
@@ -160,6 +171,10 @@ public class SendingThread implements Runnable {
         }
     }
 
+    /**
+     * Download link from neighbour
+     * @throws IOException
+     */
     private void download() throws IOException {
         System.out.println("GET - download");
         ObjectMapper mapper1 = new ObjectMapper();

@@ -16,6 +16,9 @@ public class Register implements Runnable {
         this.port = portID;
     }
 
+    /**
+     * Start Register to handle Clients
+     */
     public void run() {
         System.out.println("Server started.");
         new Thread(new Timer()).start();
@@ -47,6 +50,9 @@ public class Register implements Runnable {
         return this.isStopped;
     }
 
+    /**
+     * Stop Register
+     */
     public synchronized void stop(){
         this.isStopped = true;
         try {
@@ -56,6 +62,9 @@ public class Register implements Runnable {
         }
     }
 
+    /**
+     * Open Register on port
+     */
     private void openServerSocket() {
         try {
             this.serverSocket = new ServerSocket(this.port);

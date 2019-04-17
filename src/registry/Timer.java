@@ -14,7 +14,9 @@ public class Timer implements Runnable{
         isRunning = false;
     }
 
-    //Every 60 seconds activates serviceRemove function
+    /**
+     * Every 60 seconds activates serviceRemove function
+     */
     public void run() {
         try {
             while (isRunning) {
@@ -26,7 +28,9 @@ public class Timer implements Runnable{
         }
     }
 
-    //Function to check all the ips in listOfIps and ping them to see if they there, if not deletes them from list
+    /**
+     * Function to check all the ips in listOfIps and ping them to see if they there, if not deletes them from list
+     */
     private void serviceRemove() {
         String url;
         ArrayList<String> copyOfListOfPeers = new ArrayList<>(Register.listOfPeers);
