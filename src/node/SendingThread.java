@@ -2,6 +2,10 @@ package node;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import util.FileReader;
 
 import java.io.*;
@@ -116,9 +120,17 @@ public class SendingThread implements Runnable {
                     }
                 }
                 if (myRequest) {
-                    PostPackage postPackage = mapper.readValue(postData, PostPackage.class);
-                    String fileType = postPackage.getFileType();
-                    String encodedString = postPackage.getContent();
+                    //System.out.println(postData);
+
+                    JSONParser parser = new JSONParser();
+                    JSONObject bodyParts = null;
+                    try {
+                        bodyParts = (JSONObject) parser.parse(postData);
+                    } catch (org.json.simple.parser.ParseException e) {
+                        e.printStackTrace();
+                    }
+                    String fileType = (String) bodyParts.get("fileType");
+                    String encodedString = (String) bodyParts.get("content");
                     byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
 
                     // create output file
@@ -204,13 +216,14 @@ public class SendingThread implements Runnable {
 
             byte[] fileContent = FileUtils.readFileToByteArray(inputFile);
             String encodedString = Base64.getEncoder().encodeToString(fileContent);
+            System.out.println(encodedString.length());
 
             for (String neighbor : Client.getNeighbours()) {
                 PostPackage postPackage = new PostPackage();
                 postPackage.setStatus(200);
                 postPackage.setMimetype("text/html");
                 postPackage.setFileType(fileType);
-                postPackage.setContent(encodedString);
+                postPackage.setContent(encodedString.replaceAll("[\\x00-\\x09\\x11\\x12\\x14-\\x1F\\x7F]", ""));
                 String outData = mapper1.writeValueAsString(postPackage);
                 //System.out.println(outData);
 
