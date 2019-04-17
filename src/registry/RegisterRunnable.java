@@ -17,6 +17,10 @@ public class RegisterRunnable implements Runnable {
         this.clientSocket = clientSocket;
     }
 
+    /**
+     * Start RegisterRunnable if get request getpeers return peers,
+     * if client Enter return neighbours
+     */
     public void run() {
         try {
             InputStream input = clientSocket.getInputStream();
@@ -63,8 +67,8 @@ public class RegisterRunnable implements Runnable {
     /**
      * Code to take 2 random ip-s from listOfIps and send them back. Wont run until at least 3 people have entered
      *
-     * @param ip
-     * @return
+     * @param ip clients ip
+     * @return 2 random neighbours
      */
     private String actionEnter(String ip) {
         String message;
