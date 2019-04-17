@@ -30,30 +30,15 @@ public class RegisterRunnable implements Runnable {
             String line;
             line = in.readLine();
 
-            String message;
-            String ip = "";
-            String action = "";
+            String message = "HTTP/1.1 200 OK\r\n";
+            String ip;
             if (line.contains("GET") && line.contains("getpeers")) {
                 while ((line = in.readLine()) != null && (line.length() != 0)) {
-                    if (line.contains("action:")) {
-                        action = line.substring(8, line.length());
-                    } else if (line.contains("ip:")) {
+                    if (line.contains("ip:")) {
                         ip = line.substring(4, line.length());
+                        message = actionEnter(ip);
                     }
                 }
-                if (action.equals("Enter") && !(ip.equals(""))) {
-                    message = actionEnter(ip);
-                } else {
-                    message = "HTTP/1.1 200 OK\r\n" +
-                            "Content-Type: text/html\r\n" +
-                            "\r\n" +
-                            "Wrong data";
-                }
-            } else {
-                message = "HTTP/1.1 200 OK\r\n" +
-                        "Content-Type: text/html\r\n" +
-                        "\r\n" +
-                        "Wrong request";
             }
             output.write(message.getBytes());
             output.close();

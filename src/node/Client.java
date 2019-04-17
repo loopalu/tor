@@ -66,7 +66,6 @@ public class Client implements Runnable {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("ip", myIp);
-        conn.setRequestProperty("action", "Enter");
         conn.setDoOutput(true);
 
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
