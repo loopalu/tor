@@ -9,12 +9,12 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
-public class Sender implements Runnable {
+public class NodeSender implements Runnable {
 
     private boolean isRunning = true;
 
     /**
-     * Run Sender and start asking client what to send to neighbours
+     * Run NodeSender and start asking client what to send to neighbours
      */
     public void run() {
         while (isRunning) {
@@ -28,12 +28,12 @@ public class Sender implements Runnable {
             }
             String time = String.valueOf(System.currentTimeMillis());
             try {
-                FileWritter.write(String.valueOf(Client.getPort()), time);
+                FileWritter.write(String.valueOf(NodeController.getPort()), time);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (Client.getNeighbours().size() >= 2) {
-                for (String i : Client.getNeighbours()) {
+            if (NodeController.getNeighbours().size() >= 2) {
+                for (String i : NodeController.getNeighbours()) {
                     try {
                         URL url = new URL(i);
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();

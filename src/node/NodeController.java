@@ -10,7 +10,7 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-public class Client implements Runnable {
+public class NodeController implements Runnable {
 
     private String registryIP;
     private boolean isRunning;
@@ -18,7 +18,7 @@ public class Client implements Runnable {
     private static ArrayList<String> neighbors = new ArrayList<>();
     private static Integer port;
 
-    Client(String myIp, String registryIp, Integer port) {
+    NodeController(String myIp, String registryIp, Integer port) {
         this.isRunning = true;
         this.myIp = myIp + ":" + port;
         this.registryIP = registryIp;
@@ -30,16 +30,16 @@ public class Client implements Runnable {
     }
 
     /**
-     * Start Client
+     * Start NodeController
      */
     public void run() {
-        System.out.println("Client started");
+        System.out.println("NodeController started");
 
-        ClientListener clientListener = new ClientListener(port);
-        new Thread(clientListener).start();
+        NodeListener nodeListener = new NodeListener(port);
+        new Thread(nodeListener).start();
 
-        Sender sender = new Sender();
-        new Thread(sender).start();
+        NodeSender nodeSender = new NodeSender();
+        new Thread(nodeSender).start();
         while (isRunning) {
             try {
                 setNeighbors();
@@ -48,8 +48,8 @@ public class Client implements Runnable {
                 e.printStackTrace();
             }
         }
-        clientListener.stop();
-        sender.stop();
+        nodeListener.stop();
+        nodeSender.stop();
     }
 
     synchronized void stop() {
@@ -57,7 +57,7 @@ public class Client implements Runnable {
     }
 
     /**
-     * Set 2 neighbours for Client
+     * Set 2 neighbours for NodeController
      *
      * @throws IOException
      */

@@ -2,7 +2,6 @@ package node;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -87,7 +86,7 @@ public class SendingThread implements Runnable {
         }
         if (timeToLive != null) {
             if (timeToLive > 0) {
-                for (String neighbor : Client.getNeighbours()) {
+                for (String neighbor : NodeController.getNeighbours()) {
                     URL url = new URL(neighbor);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
@@ -159,7 +158,7 @@ public class SendingThread implements Runnable {
                     }
                 } else {
                     timeToLive -= 1;
-                    for (String neighbor : Client.getNeighbours()) {
+                    for (String neighbor : NodeController.getNeighbours()) {
                         URL url = new URL(neighbor);
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
@@ -223,7 +222,7 @@ public class SendingThread implements Runnable {
             byte[] fileContent = FileUtils.readFileToByteArray(inputFile);
             String encodedString = Base64.getEncoder().encodeToString(fileContent);
 
-            for (String neighbor : Client.getNeighbours()) {
+            for (String neighbor : NodeController.getNeighbours()) {
                 PostPackage postPackage = new PostPackage();
                 postPackage.setStatus(200);
                 postPackage.setMimetype("text/html");

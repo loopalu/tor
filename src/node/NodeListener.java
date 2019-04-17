@@ -4,19 +4,19 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class ClientListener implements Runnable {
+public class NodeListener implements Runnable {
 
     private int port;
     private boolean isRunning = true;
     private ServerSocket serverSocket;
 
-    ClientListener(int port) {
+    NodeListener(int port) {
         this.port = port;
     }
 
 
     /**
-     * Run ClientListener on port
+     * Run NodeListener on port
      */
     public void run() {
         openServerSocket();
