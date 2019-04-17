@@ -9,16 +9,16 @@ import java.util.ArrayList;
 import java.util.Random;
 
 
-public class RegisterRunnable implements Runnable {
+public class RegistryRunnable implements Runnable {
 
     protected Socket clientSocket;
 
-    RegisterRunnable(Socket clientSocket) {
+    RegistryRunnable(Socket clientSocket) {
         this.clientSocket = clientSocket;
     }
 
     /**
-     * Start RegisterRunnable if get request getpeers return peers,
+     * Start RegistryRunnable if get request getpeers return peers,
      * if client Enter return neighbours
      */
     public void run() {
@@ -60,12 +60,12 @@ public class RegisterRunnable implements Runnable {
      */
     private String actionEnter(String ip) {
         String message;
-        if (!Register.listOfPeers.contains(ip)) {
-            Register.listOfPeers.add(ip);
+        if (!Registry.listOfPeers.contains(ip)) {
+            Registry.listOfPeers.add(ip);
         }
 
         while (true) {
-            ArrayList<String> temporaryListOfIps = new ArrayList<>(Register.listOfPeers);
+            ArrayList<String> temporaryListOfIps = new ArrayList<>(Registry.listOfPeers);
             System.out.println(temporaryListOfIps);
 
             if (temporaryListOfIps.size() > 2) {

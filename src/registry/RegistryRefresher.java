@@ -6,7 +6,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 
-public class Timer implements Runnable {
+public class RegistryRefresher implements Runnable {
 
     private static boolean isRunning = true;
 
@@ -33,7 +33,7 @@ public class Timer implements Runnable {
      */
     private void serviceRemove() {
         String url;
-        ArrayList<String> copyOfListOfPeers = new ArrayList<>(Register.listOfPeers);
+        ArrayList<String> copyOfListOfPeers = new ArrayList<>(Registry.listOfPeers);
         for (String peer : copyOfListOfPeers) {
             if (peer.length() <= 5) {
                 url = "http://localhost:" + peer + "/";
@@ -48,10 +48,10 @@ public class Timer implements Runnable {
                 if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     continue;
                 } else {
-                    Register.listOfPeers.remove(peer);
+                    Registry.listOfPeers.remove(peer);
                 }
             } catch (IOException e) {
-                Register.listOfPeers.remove(peer);
+                Registry.listOfPeers.remove(peer);
             }
         }
 

@@ -5,23 +5,23 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class Register implements Runnable {
+public class Registry implements Runnable {
 
     private int port;
     public static ArrayList<String> listOfPeers = new ArrayList<>();
     public ServerSocket serverSocket;
     private boolean isStopped = false;
 
-    public Register(int portID) {
+    public Registry(int portID) {
         this.port = portID;
     }
 
     /**
-     * Start Register to handle Clients
+     * Start Registry to handle Clients
      */
     public void run() {
         System.out.println("Server started.");
-        new Thread(new Timer()).start();
+        new Thread(new RegistryRefresher()).start();
         openServerSocket();
         while (!isStopped()) {
             Socket clientSocket = null;
@@ -37,11 +37,11 @@ public class Register implements Runnable {
             }
 
             new Thread(
-                    new RegisterRunnable(
+                    new RegistryRunnable(
                             clientSocket)
             ).start();
         }
-        Timer.stop();
+        RegistryRefresher.stop();
         System.out.println("Server Stopped.");
 
     }
@@ -51,7 +51,7 @@ public class Register implements Runnable {
     }
 
     /**
-     * Stop Register
+     * Stop Registry
      */
     public synchronized void stop() {
         this.isStopped = true;
@@ -63,7 +63,7 @@ public class Register implements Runnable {
     }
 
     /**
-     * Open Register on port
+     * Open Registry on port
      */
     private void openServerSocket() {
         try {
