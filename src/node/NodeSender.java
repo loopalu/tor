@@ -42,7 +42,7 @@ public class NodeSender implements Runnable {
                         conn.setRequestProperty("Content-Type", "text/plain");
                         conn.setRequestProperty("url", urlString);
                         conn.setRequestProperty("id", time);
-                        conn.setRequestProperty("timetolive", String.valueOf(10));
+                        conn.setRequestProperty("timetolive", String.valueOf(5));
                         conn.setDoOutput(true);
 
                         Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
