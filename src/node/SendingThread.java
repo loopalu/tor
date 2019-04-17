@@ -69,6 +69,7 @@ public class SendingThread implements Runnable {
 
     /**
      * Forward to neighbours
+     *
      * @throws IOException
      */
     private void sendForward() throws IOException {
@@ -89,12 +90,14 @@ public class SendingThread implements Runnable {
                 for (String neighbor : Client.getNeighbours()) {
                     URL url = new URL(neighbor);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
                     conn.setRequestMethod("GET");
                     conn.setRequestProperty("Content-Type", "text/plain");
                     conn.setRequestProperty("url", getData);
                     conn.setRequestProperty("id", id);
-                    conn.setRequestProperty("timetolive", String.valueOf(timeToLive-1));
+                    conn.setRequestProperty("timetolive", String.valueOf(timeToLive - 1));
                     conn.setDoOutput(true);
+
                     Reader inasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
                     inasd.close();
                 }
@@ -104,11 +107,13 @@ public class SendingThread implements Runnable {
 
     /**
      * Send back Post method respond
+     *
      * @throws IOException
      */
     private void sendBack() throws IOException {
         boolean myRequest = false;
         System.out.println("POST - back");
+
         for (String string : httpText) {
             if (string.contains("id")) {
                 this.id = string.substring(4);
@@ -122,8 +127,10 @@ public class SendingThread implements Runnable {
         if (timeToLive != null) {
             if (timeToLive > 0) {
                 ArrayList<String> myRequests = FileReader.read(Integer.valueOf(port));
+
                 for (String request : myRequests) {
                     System.out.println(id + " " + request);
+
                     if (request.equals(id)) {
                         myRequest = true;
                         break;
@@ -146,7 +153,7 @@ public class SendingThread implements Runnable {
                         byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
 
                         // create output file
-                        FileOutputStream outputStream2 = new FileOutputStream(port + "."+fileType);
+                        FileOutputStream outputStream2 = new FileOutputStream(port + "." + fileType);
                         outputStream2.write(decodedBytes);
                         outputStream2.close();
                     }
@@ -155,11 +162,13 @@ public class SendingThread implements Runnable {
                     for (String neighbor : Client.getNeighbours()) {
                         URL url = new URL(neighbor);
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
                         conn.setRequestMethod("POST");
                         conn.setRequestProperty("Content-Type", "application/json");
                         conn.setRequestProperty("id", id);
                         conn.setRequestProperty("timetolive", String.valueOf(timeToLive));
                         conn.setDoOutput(true);
+
                         OutputStream outputStream = conn.getOutputStream();
                         outputStream.write(postData.getBytes());
                         outputStream.close();
@@ -173,6 +182,7 @@ public class SendingThread implements Runnable {
 
     /**
      * Download link from neighbour
+     *
      * @throws IOException
      */
     private void download() throws IOException {
@@ -197,34 +207,14 @@ public class SendingThread implements Runnable {
             }
         }
         if (!myRequest && getData != null) {
-            String fileType;
-            if (getData.contains(".jpg")) {
-                fileType = "jpg";
-            } else if (getData.contains(".pdf")) {
-                fileType = "pdf";
-            } else if (getData.contains(".gif")) {
-                fileType = "gif";
-            } else if (getData.contains(".txt")) {
-                fileType = "txt";
-            } else if (getData.contains(".html")) {
-                fileType = "html";
-            } else if (getData.contains(".rar")) {
-                fileType = "rar";
-            } else if (getData.contains(".zip")) {
-                fileType = "zip";
-            } else if (getData.contains(".bmp")) {
-                fileType = "bmp";
-            } else if (getData.contains(".jpeg")) {
-                fileType = "jpeg";
-            } else if (getData.contains(".png")) {
-                fileType = "png";
-            } else {
-                fileType = "html";
-            }
+            String fileType = fileType(getData);
+
             URL website = new URL(getData);
             ReadableByteChannel byteChannel = Channels.newChannel(website.openStream());
+
             String fileName = port + "." + fileType;
             FileOutputStream outputStream = new FileOutputStream(fileName);
+
             outputStream.getChannel().transferFrom(byteChannel, 0, Long.MAX_VALUE);
             outputStream.close();
 
@@ -244,14 +234,17 @@ public class SendingThread implements Runnable {
 
                 URL url = new URL(neighbor);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json");
                 conn.setRequestProperty("timetolive", "20");
                 conn.setRequestProperty("id", id);
                 conn.setDoOutput(true);
+
                 OutputStream outputStream2 = conn.getOutputStream();
                 outputStream2.write(outData.getBytes());
                 outputStream2.close();
+
                 Reader inasdasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
                 inasdasd.close();
             }
@@ -262,5 +255,33 @@ public class SendingThread implements Runnable {
         double lazyness = Math.random();
         double chance = 0.5;
         return lazyness <= chance;
+    }
+
+    private String fileType(String getData) {
+        String fileType;
+        if (getData.contains(".jpg")) {
+            fileType = "jpg";
+        } else if (getData.contains(".pdf")) {
+            fileType = "pdf";
+        } else if (getData.contains(".gif")) {
+            fileType = "gif";
+        } else if (getData.contains(".txt")) {
+            fileType = "txt";
+        } else if (getData.contains(".html")) {
+            fileType = "html";
+        } else if (getData.contains(".rar")) {
+            fileType = "rar";
+        } else if (getData.contains(".zip")) {
+            fileType = "zip";
+        } else if (getData.contains(".bmp")) {
+            fileType = "bmp";
+        } else if (getData.contains(".jpeg")) {
+            fileType = "jpeg";
+        } else if (getData.contains(".png")) {
+            fileType = "png";
+        } else {
+            fileType = "html";
+        }
+        return fileType;
     }
 }

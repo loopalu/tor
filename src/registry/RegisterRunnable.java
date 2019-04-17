@@ -26,8 +26,10 @@ public class RegisterRunnable implements Runnable {
             InputStream input = clientSocket.getInputStream();
             OutputStream output = clientSocket.getOutputStream();
             BufferedReader in = new BufferedReader(new InputStreamReader(input));
+
             String line;
             line = in.readLine();
+
             String message;
             String ip = "";
             String action = "";
@@ -57,6 +59,7 @@ public class RegisterRunnable implements Runnable {
             output.close();
             input.close();
             clientSocket.close();
+
             long time = System.currentTimeMillis();
             System.out.println("Request processed: " + time);
         } catch (IOException e) {
@@ -79,6 +82,7 @@ public class RegisterRunnable implements Runnable {
         while (true) {
             ArrayList<String> temporaryListOfIps = new ArrayList<>(Register.listOfPeers);
             System.out.println(temporaryListOfIps);
+
             if (temporaryListOfIps.size() > 2) {
                 JSONArray ips = new JSONArray();
                 while (ips.size() < 2) {

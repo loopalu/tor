@@ -6,7 +6,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 
-public class Timer implements Runnable{
+public class Timer implements Runnable {
 
     private static boolean isRunning = true;
 
@@ -43,6 +43,7 @@ public class Timer implements Runnable{
             try {
                 URL urlServer = new URL(url);
                 HttpURLConnection urlConn = (HttpURLConnection) urlServer.openConnection();
+
                 urlConn.connect();
                 if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     continue;

@@ -10,7 +10,7 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-public class Client implements Runnable{
+public class Client implements Runnable {
 
     private String registryIP;
     private boolean isRunning;
@@ -34,8 +34,10 @@ public class Client implements Runnable{
      */
     public void run() {
         System.out.println("Client started");
+
         ClientListener clientListener = new ClientListener(port);
         new Thread(clientListener).start();
+
         Sender sender = new Sender();
         new Thread(sender).start();
         while (isRunning) {
@@ -56,11 +58,12 @@ public class Client implements Runnable{
 
     /**
      * Set 2 neighbours for Client
+     *
      * @throws IOException
      */
     private void setNeighbors() throws IOException {
         URL url = new URL(this.registryIP + "/getpeers");
-        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("ip", myIp);
         conn.setRequestProperty("action", "Enter");
@@ -73,7 +76,7 @@ public class Client implements Runnable{
         JSONParser parser = new JSONParser();
         JSONObject ips = null;
         try {
-            ips = (JSONObject)parser.parse(line);
+            ips = (JSONObject) parser.parse(line);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -84,6 +87,7 @@ public class Client implements Runnable{
 
     /**
      * Get my port
+     *
      * @return
      */
     public static Integer getPort() {
@@ -92,6 +96,7 @@ public class Client implements Runnable{
 
     /**
      * Get my ip address
+     *
      * @return
      */
     public static String getMyIp() {

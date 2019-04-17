@@ -23,13 +23,13 @@ public class Register implements Runnable {
         System.out.println("Server started.");
         new Thread(new Timer()).start();
         openServerSocket();
-        while(! isStopped()){
+        while (!isStopped()) {
             Socket clientSocket = null;
             try {
                 clientSocket = this.serverSocket.accept();
             } catch (IOException e) {
-                if(isStopped()) {
-                    System.out.println("Server Stopped.") ;
+                if (isStopped()) {
+                    System.out.println("Server Stopped.");
                     return;
                 }
                 throw new RuntimeException(
@@ -53,7 +53,7 @@ public class Register implements Runnable {
     /**
      * Stop Register
      */
-    public synchronized void stop(){
+    public synchronized void stop() {
         this.isStopped = true;
         try {
             this.serverSocket.close();

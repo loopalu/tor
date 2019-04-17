@@ -19,11 +19,13 @@ public class SenderReceiver implements Runnable {
      */
     public void run() {
         try {
-            InputStream input  = clientSocket.getInputStream();
+            InputStream input = clientSocket.getInputStream();
             OutputStream output = clientSocket.getOutputStream();
             String ip = clientSocket.getRemoteSocketAddress().toString();
             ArrayList<String> httpText = new ArrayList<String>();
+
             httpText.add(ip);
+
             BufferedReader in = new BufferedReader(new InputStreamReader(input));
             String line;
             line = in.readLine();
@@ -52,6 +54,7 @@ public class SenderReceiver implements Runnable {
             //System.out.println(postData);
             new Thread(new SendingThread(port, httpText, postData)).start();
             String message = "HTTP/1.1 200 OK";
+
             output.write(message.getBytes());
             output.close();
             input.close();
