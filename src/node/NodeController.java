@@ -31,6 +31,9 @@ public class NodeController implements Runnable {
 
     /**
      * Start NodeController
+     * Start NodeSender
+     * Start NodeListener
+     * Ask for neighbors every minute
      */
     public void run() {
         System.out.println("NodeController started");
