@@ -124,19 +124,22 @@ public class SendingThread implements Runnable {
 
                     JSONParser parser = new JSONParser();
                     JSONObject bodyParts = null;
-                    try {
-                        bodyParts = (JSONObject) parser.parse(postData);
-                    } catch (org.json.simple.parser.ParseException e) {
-                        e.printStackTrace();
+                    if (postData != null) {
+                        try {
+                            bodyParts = (JSONObject) parser.parse(postData);
+                        } catch (ParseException e) {
+                        }
                     }
-                    String fileType = (String) bodyParts.get("fileType");
-                    String encodedString = (String) bodyParts.get("content");
-                    byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
+                    if (bodyParts != null) {
+                        String fileType = (String) bodyParts.get("fileType");
+                        String encodedString = (String) bodyParts.get("content");
+                        byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
 
-                    // create output file
-                    FileOutputStream outputStream2 = new FileOutputStream(port + "."+fileType);
-                    outputStream2.write(decodedBytes);
-                    outputStream2.close();
+                        // create output file
+                        FileOutputStream outputStream2 = new FileOutputStream(port + "."+fileType);
+                        outputStream2.write(decodedBytes);
+                        outputStream2.close();
+                    }
                 } else {
                     timeToLive -= 1;
                     for (String neighbor : Client.getNeighbours()) {
@@ -180,7 +183,7 @@ public class SendingThread implements Runnable {
                 break;
             }
         }
-        if (!myRequest) {
+        if (!myRequest && getData != null) {
             String fileType;
             if (getData.contains(".jpg")) {
                 fileType = "jpg";
@@ -223,7 +226,7 @@ public class SendingThread implements Runnable {
                 postPackage.setStatus(200);
                 postPackage.setMimetype("text/html");
                 postPackage.setFileType(fileType);
-                postPackage.setContent(encodedString.replaceAll("[\\x00-\\x09\\x11\\x12\\x14-\\x1F\\x7F]", ""));
+                postPackage.setContent(encodedString.replaceAll("[\\x00-\\x09\\x11\\x12\\x14-\\x1F\\x7F\\x04]", ""));
                 String outData = mapper1.writeValueAsString(postPackage);
                 //System.out.println(outData);
 
