@@ -50,8 +50,6 @@ public class SenderReceiver implements Runnable {
                 in.read(charArray, 0, postDataI);
                 postData = new String(charArray);
             }
-            //System.out.println("SADASDaSD");
-            //System.out.println(postData);
             new Thread(new SendingThread(port, httpText, postData)).start();
             String message = "HTTP/1.1 200 OK";
 

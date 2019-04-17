@@ -223,13 +223,11 @@ public class SendingThread implements Runnable {
             String encodedString = Base64.getEncoder().encodeToString(fileContent);
 
             for (String neighbor : NodeController.getNeighbours()) {
-                PostPackage postPackage = new PostPackage();
-                postPackage.setStatus(200);
-                postPackage.setMimetype("text/html");
-                postPackage.setFileType(fileType);
-                postPackage.setContent(encodedString.replaceAll("[\\x00-\\x09\\x11\\x12\\x14-\\x1F\\x7F\\x04]", ""));
-                String outData = mapper1.writeValueAsString(postPackage);
-                //System.out.println(outData);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("status", 200);
+                jsonObject.put("mimetype", "text/html");
+                jsonObject.put("content", encodedString.replaceAll("[\\x00-\\x09\\x11\\x12\\x14-\\x1F\\x7F\\x04]", ""));
+                jsonObject.put("fileType", fileType);
 
                 URL url = new URL(neighbor);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -241,7 +239,8 @@ public class SendingThread implements Runnable {
                 conn.setDoOutput(true);
 
                 OutputStream outputStream2 = conn.getOutputStream();
-                outputStream2.write(outData.getBytes());
+                //outputStream2.write(outData.getBytes());
+                outputStream2.write(jsonObject.toString().getBytes());
                 outputStream2.close();
 
                 Reader inasdasd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
