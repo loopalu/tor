@@ -10,9 +10,9 @@ public class FileReader {
     /**
      * Read file
      *
-     * @param port port
-     * @return array of string
-     * @throws FileNotFoundException
+     * @param port Address/port of the node
+     * @return List of requests' ids
+     * @throws FileNotFoundException The exeption when it is not possible to read the file
      */
     public static ArrayList<String> read(Integer port) throws FileNotFoundException {
         ArrayList<String> lines = new ArrayList<>();

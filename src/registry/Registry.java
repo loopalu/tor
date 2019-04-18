@@ -17,10 +17,10 @@ public class Registry implements Runnable {
     }
 
     /**
-     * Start Registry to handle Clients
+     * Start Registry to handle Clients (Nodes)
      */
     public void run() {
-        System.out.println("Server started.");
+        System.out.println("Registry started.");
         new Thread(new RegistryRefresher()).start();
         openServerSocket();
         while (!isStopped()) {
@@ -29,20 +29,18 @@ public class Registry implements Runnable {
                 clientSocket = this.serverSocket.accept();
             } catch (IOException e) {
                 if (isStopped()) {
-                    System.out.println("Server Stopped.");
+                    System.out.println("Registry Stopped.");
                     return;
                 }
-                throw new RuntimeException(
-                        "Error accepting client connection", e);
+                throw new RuntimeException("Error accepting client connection", e);
             }
 
             new Thread(
-                    new RegistryRunnable(
-                            clientSocket)
+                    new RegistryRunnable(clientSocket)
             ).start();
         }
         RegistryRefresher.stop();
-        System.out.println("Server Stopped.");
+        System.out.println("Registry Stopped.");
 
     }
 
@@ -58,7 +56,7 @@ public class Registry implements Runnable {
         try {
             this.serverSocket.close();
         } catch (IOException e) {
-            throw new RuntimeException("Error closing server", e);
+            throw new RuntimeException("Error closing registry", e);
         }
     }
 

@@ -9,9 +9,9 @@ public class FileWritter {
     /**
      * Write file
      *
-     * @param port port
-     * @param id   client id
-     * @throws IOException
+     * @param port Address/port of the node
+     * @param id Request id
+     * @throws IOException The exception when it is not possible to write into file
      */
     public static void write(String port, String id) throws IOException {
         BufferedWriter writer = null;

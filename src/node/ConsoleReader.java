@@ -4,18 +4,18 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class SenderReceiver implements Runnable {
+public class ConsoleReader implements Runnable {
 
     private int port;
     private Socket clientSocket;
 
-    SenderReceiver(int port, Socket clientSocket) {
+    ConsoleReader(int port, Socket clientSocket) {
         this.port = port;
         this.clientSocket = clientSocket;
     }
 
     /**
-     * Run SenderReceiver to receive post data
+     * Run ConsoleReader to receive URL from console
      */
     public void run() {
         try {
@@ -36,10 +36,7 @@ public class SenderReceiver implements Runnable {
             while ((line = in.readLine()) != null && (line.length() != 0)) {
                 httpText.add(line);
                 if (line.contains("Content-Length:")) {
-                    postDataI = new Integer(
-                            line.substring(
-                                    line.indexOf("Content-Length:") + 16,
-                                    line.length()));
+                    postDataI = new Integer(line.substring(line.indexOf("Content-Length:") + 16, line.length()));
                 }
             }
             String postData = null;
@@ -50,7 +47,7 @@ public class SenderReceiver implements Runnable {
                 in.read(charArray, 0, postDataI);
                 postData = new String(charArray);
             }
-            new Thread(new SendingThread(port, httpText, postData)).start();
+            new Thread(new RequestHandler(port, httpText, postData)).start();
             String message = "HTTP/1.1 200 OK";
 
             output.write(message.getBytes());
