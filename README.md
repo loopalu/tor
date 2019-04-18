@@ -18,7 +18,7 @@ Lisainfo
 1. "tor" kaustas on pordinumbritega tekstifailid, kuhu iga node paneb kirja oma requestide unikaalsed id väärtused. Kuna testima pidi ka lokaalvõrgus, siis on kaustas 3 faili.
 2. "util" kaustas on faili kirjutamiseks ja sealt lugemiseks mõeldud klassid
 3. "tor selgitus.jpg" on pilt sellest, mille õpetaja Verrev klassis tahvlile tegi
-
+4. "resources" kaustas on config.resources failid
 -----------------------------------------------------------------
 Gerdi soovitused
 --------
