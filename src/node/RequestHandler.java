@@ -135,21 +135,8 @@ public class RequestHandler implements Runnable {
         if (timeToLive != null) {
             // If timetolive is not 0 then tries to process the request (either download or forward to neighbors)
             if (timeToLive > 0) {
-                // Reads the ids of requests that current node has sent out
-                ArrayList<String> myRequests = FileReader.read(Integer.valueOf(port));
-
-                for (String request : myRequests) {
-                    //System.out.println(id + " " + request); //For debug to see id-s of my own request and compare to id of received request
-
-                    // Checks if node had sent out request with given id
-                    if (request.split(":")[0].equals(id)) {
-                        myRequest = true;
-                        isArrived = Boolean.parseBoolean(request.split(":")[1]);
-                        break;
-                    }
-                }
                 // If current node sent out request with given id then tries to save file that was sent back
-                if (myRequest) {
+                if (isMyRequest()) {
                     if (!isArrived) {
                         FileWritter.write(port, id, true);
                         JSONParser parser = new JSONParser();
@@ -206,6 +193,29 @@ public class RequestHandler implements Runnable {
     }
 
     /**
+     *  Checks if received request belongs to me
+     *
+     * @throws FileNotFoundException The exception in the case file does not exist
+     */
+    private boolean isMyRequest() throws FileNotFoundException {
+        // Reads the ids of requests that current node has sent out
+        ArrayList<String> myRequests = FileReader.read(Integer.valueOf(port));
+        boolean myRequest = false;
+
+        for (String request : myRequests) {
+            //System.out.println(id + " " + request); //For debug to see id-s of my own request and compare to id of received request
+
+            // Checks if node had sent out request with given id
+            if (request.split(":")[0].equals(id)) {
+                myRequest = true;
+                isArrived = Boolean.parseBoolean(request.split(":")[1]);
+                break;
+            }
+        }
+        return myRequest;
+    }
+
+    /**
      *  Tries to download requested file
      *
      * @throws IOException The exception in the case file does not exist
@@ -220,16 +230,7 @@ public class RequestHandler implements Runnable {
             }
         }
 
-        boolean myRequest = false;
-        ArrayList<String> myRequests = FileReader.read(Integer.valueOf(port));
-        for (String request : myRequests) {
-            if (request.equals(id)) {
-                myRequest = true;
-                break;
-            }
-        }
-
-        if (!myRequest && getData != null) {
+        if (!isMyRequest() && getData != null) {
 
             // Validates the URL and acts accordingly
             String urlValidity = urlValidator(getData);
