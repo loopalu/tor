@@ -227,10 +227,12 @@ public class RequestHandler implements Runnable {
 
             // Validates the URL and acts accordingly
             String urlValidity = urlValidator(getData);
-            if (urlValidity.equals("Host does not exist")) {
+            if (urlValidity.equals("Host does not exist!")) {
                 sendError("Host does not exist!");
             } else if (urlValidity.equals("false")) {
                 sendError("Host is not available!");
+            } else if (urlValidity.equals("URL is not valid!")) {
+                sendError("URL is not valid!");
             } else {
                 downloadAndSend(getData);
             }
@@ -326,13 +328,17 @@ public class RequestHandler implements Runnable {
      * @throws IOException The exception for unknwn host
      */
     private String urlValidator(String getData) throws IOException {
-        String hostname = new URL(getData).getHost();
         try {
-            // Check if URL is reachable
-            InetAddress address = InetAddress.getByName(hostname);
-            return String.valueOf((address.isReachable(1000)));
-        } catch (UnknownHostException e) {
-            return "Host does not exist";
+            String hostname = new URL(getData).getHost();
+            try {
+                // Check if URL is reachable
+                InetAddress address = InetAddress.getByName(hostname);
+                return String.valueOf((address.isReachable(1000)));
+            } catch (UnknownHostException e) {
+                return "Host does not exist!";
+            }
+        } catch (MalformedURLException e) {
+            return "URL is not valid!";
         }
     }
 
