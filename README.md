@@ -1,14 +1,21 @@
-# tor
+tor, anonümiseeriv võrk
+=======================
 
-*Tutorial, kuidas käivitada programmi.....
+Tutorial, kuidas käivitada programmi
+------------------------------------
 
-1.
+1. Käivita RegistryStarter kaustas "src/registry"
 
-2.
+2. Käivita tester1, tester2 ja tester3 kaustas "src/node"
 
-3.
+3. Sisesta URL. Kui kopeerid kusagilt, siis pane URL lõppu tühik, et IntelliJ seda brauseris ei avaks.
 
-4.
+4. Fail/failid (lokaalvõrgus testimisel failid) salvestatakse projekti kausta "tor"
 
-...
+-----------------------------------------------------------------
+Lisainfo
+--------
+1. "tor" kaustas on pordinumbritega tekstifailid, kuhu iga node paneb kirja oma requestide unikaalsed id väärtused. Kuna testima pidi ka lokaalvõrgus, siis on kaustas 3 faili.
+2. "util" kaustas on faili kirjutamiseks ja sealt lugemiseks mõeldud klassid
+3. "tor selgitus.jpg" on pilt sellest, mille õpetaja Verrev klassis tahvlile tegi
 
