@@ -22,9 +22,7 @@ Lisainfo
 -----------------------------------------------------------------
 Gerdi soovitused
 --------
-- console, conf file
 - mime type?
-- status võiks tulla tagasi kui vigane url
 - retry 
 - high lazyness testing
 - veateade et ei saanud site kätte pärast mingit aega
