@@ -28,7 +28,7 @@ public class NodeSender implements Runnable {
             }
             String time = String.valueOf(System.currentTimeMillis());
             try {
-                FileWritter.write(String.valueOf(NodeController.getPort()), time);
+                FileWritter.write(String.valueOf(NodeController.getPort()), time, false);
             } catch (IOException e) {
                 e.printStackTrace();
             }

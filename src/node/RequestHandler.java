@@ -5,6 +5,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import util.FileReader;
+import util.FileWritter;
 
 import java.io.*;
 import java.net.*;
@@ -24,6 +25,7 @@ public class RequestHandler implements Runnable {
     private String requestMethod;
     private String id;
     private Integer timeToLive;
+    private boolean isArrived = false;
 
     /**
      * Initializes the RequestHandler with given information
@@ -140,39 +142,43 @@ public class RequestHandler implements Runnable {
                     //System.out.println(id + " " + request); //For debug to see id-s of my own request and compare to id of received request
 
                     // Checks if node had sent out request with given id
-                    if (request.equals(id)) {
+                    if (request.split(":")[0].equals(id)) {
                         myRequest = true;
+                        isArrived = Boolean.parseBoolean(request.split(":")[1]);
                         break;
                     }
                 }
                 // If current node sent out request with given id then tries to save file that was sent back
                 if (myRequest) {
-                    JSONParser parser = new JSONParser();
-                    JSONObject bodyParts = null;
-                    if (postData != null) {
-                        try {
-                            bodyParts = (JSONObject) parser.parse(postData);
-                        } catch (ParseException e) {
+                    if (!isArrived) {
+                        FileWritter.write(port, id, true);
+                        JSONParser parser = new JSONParser();
+                        JSONObject bodyParts = null;
+                        if (postData != null) {
+                            try {
+                                bodyParts = (JSONObject) parser.parse(postData);
+                            } catch (ParseException e) {
+                            }
                         }
-                    }
-                    if (bodyParts != null) {
-                        String status = (String) bodyParts.get("status");
+                        if (bodyParts != null) {
+                            String status = (String) bodyParts.get("status");
 
-                        // If there was some problem with request then show the error message
-                        if (status.equals("404")) {
-                            String errorMessage = (String) bodyParts.get("message");
-                            System.out.println(errorMessage);
+                            // If there was some problem with request then show the error message
+                            if (status.equals("404")) {
+                                String errorMessage = (String) bodyParts.get("message");
+                                System.out.println(errorMessage);
 
-                        // If nothing wrong with request then saves file
-                        } else {
-                            String fileType = (String) bodyParts.get("fileType");
-                            String encodedString = (String) bodyParts.get("content");
-                            byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
+                                // If nothing wrong with request then saves file
+                            } else {
+                                String fileType = (String) bodyParts.get("fileType");
+                                String encodedString = (String) bodyParts.get("content");
+                                byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
 
-                            // create output file
-                            FileOutputStream outputStream = new FileOutputStream(port + "." + fileType);
-                            outputStream.write(decodedBytes);
-                            outputStream.close();
+                                // create output file
+                                FileOutputStream outputStream = new FileOutputStream(port + "." + fileType);
+                                outputStream.write(decodedBytes);
+                                outputStream.close();
+                            }
                         }
                     }
                 // If it is not my request then forward it to neighbors
