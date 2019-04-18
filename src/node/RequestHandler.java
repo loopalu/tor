@@ -6,6 +6,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import util.FileReader;
 import util.FileWritter;
+import util.PropertyReader;
 
 import java.io.*;
 import java.net.*;
@@ -26,6 +27,9 @@ public class RequestHandler implements Runnable {
     private String id;
     private Integer timeToLive;
     private boolean isArrived = false;
+    private double lazynessLimit;
+    private Integer defaultTimeToLive;
+    private Integer timeToWaitUrl;
 
     /**
      * Initializes the RequestHandler with given information
@@ -38,6 +42,14 @@ public class RequestHandler implements Runnable {
         this.port = String.valueOf(port);
         this.httpText = httpText;
         this.postData = postData;
+        try {
+            PropertyReader propertyReader = new PropertyReader(port+"config.properties");
+            this.lazynessLimit = propertyReader.getLazyness();
+            this.defaultTimeToLive = propertyReader.getTimeToLive();
+            this.timeToWaitUrl = propertyReader.getTimeToWaitUrl();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -86,6 +98,7 @@ public class RequestHandler implements Runnable {
         if (timeToLive != null) {
             // If timetolive is not 0, then forwards the request
             if (timeToLive > 0) {
+                timeToLive -= 1;
                 for (String neighbor : NodeController.getNeighbours()) {
                     URL url = new URL(neighbor);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -94,7 +107,7 @@ public class RequestHandler implements Runnable {
                     conn.setRequestProperty("Content-Type", "text/plain");
                     conn.setRequestProperty("url", getData);
                     conn.setRequestProperty("id", id);
-                    conn.setRequestProperty("timetolive", String.valueOf(timeToLive - 1));
+                    conn.setRequestProperty("timetolive", String.valueOf(timeToLive));
                     conn.setDoOutput(true);
 
                     Reader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
@@ -196,7 +209,7 @@ public class RequestHandler implements Runnable {
      */
     private boolean isMyRequest() throws FileNotFoundException {
         // Reads the ids of requests that current node has sent out
-        ArrayList<String> myRequests = FileReader.read(Integer.valueOf(port));
+        ArrayList<String> myRequests = FileReader.read(port+".txt");
         boolean myRequest = false;
 
         for (String request : myRequests) {
@@ -256,21 +269,22 @@ public class RequestHandler implements Runnable {
         byte[] fileContent = FileUtils.readFileToByteArray(inputFile);
         String encodedString = Base64.getEncoder().encodeToString(fileContent);
 
-        for (String neighbor : NodeController.getNeighbours()) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("status", "200");
-            jsonObject.put("mimetype", "text/html");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("status", "200");
+        jsonObject.put("mimetype", "text/html");
 
-            // Remove all nonprintable characters from Base64 string (End Of File and others)
-            jsonObject.put("content", encodedString.replaceAll("[\\x00-\\x09\\x11\\x12\\x14-\\x1F\\x7F\\x04]", ""));
-            jsonObject.put("fileType", fileType);
+        // Remove all nonprintable characters from Base64 string (End Of File and others)
+        jsonObject.put("content", encodedString.replaceAll("[\\x00-\\x09\\x11\\x12\\x14-\\x1F\\x7F\\x04]", ""));
+        jsonObject.put("fileType", fileType);
+
+        for (String neighbor : NodeController.getNeighbours()) {
 
             URL url = new URL(neighbor);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("timetolive", "20");
+            connection.setRequestProperty("timetolive", String.valueOf(defaultTimeToLive));
             connection.setRequestProperty("id", id);
             connection.setDoOutput(true);
 
@@ -290,17 +304,16 @@ public class RequestHandler implements Runnable {
      * @throws IOException The exeption in case of network error
      */
     private void sendError(String string) throws IOException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("status", "404");
+        jsonObject.put("message", string);
         for (String neighbor : NodeController.getNeighbours()) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("status", "404");
-            jsonObject.put("message", string);
-
             URL url = new URL(neighbor);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("timetolive", "10");
+            connection.setRequestProperty("timetolive", String.valueOf(defaultTimeToLive));
             connection.setRequestProperty("id", id);
             connection.setDoOutput(true);
 
@@ -326,7 +339,7 @@ public class RequestHandler implements Runnable {
             try {
                 // Check if URL is reachable
                 InetAddress address = InetAddress.getByName(hostname);
-                return String.valueOf((address.isReachable(1000)));
+                return String.valueOf((address.isReachable(timeToWaitUrl)));
             } catch (UnknownHostException e) {
                 return "Host does not exist!";
             }
@@ -342,8 +355,7 @@ public class RequestHandler implements Runnable {
      */
     private boolean isNotLazy() {
         double lazyness = Math.random();
-        double chance = 0.1;
-        return lazyness <= chance;
+        return lazyness <= lazynessLimit;
     }
 
     /**

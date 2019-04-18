@@ -10,14 +10,14 @@ public class FileReader {
     /**
      * Read file
      *
-     * @param port Address/port of the node
-     * @return List of requests' ids
+     * @param file Name of the file
+     * @return List of lines from file
      * @throws FileNotFoundException The exeption when it is not possible to read the file
      */
-    public static ArrayList<String> read(Integer port) throws FileNotFoundException {
+    public static ArrayList<String> read(String file) throws FileNotFoundException {
         ArrayList<String> lines = new ArrayList<>();
         Scanner scanner = null;
-        scanner = new Scanner(new File((port.toString() + ".txt")));
+        scanner = new Scanner(new File((file)));
         while (scanner.hasNextLine()) {
             lines.add(scanner.nextLine());
         }
