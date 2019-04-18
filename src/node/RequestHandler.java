@@ -307,7 +307,7 @@ public class RequestHandler implements Runnable {
 
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("timetolive", "20");
+            connection.setRequestProperty("timetolive", "10");
             connection.setRequestProperty("id", id);
             connection.setDoOutput(true);
 
@@ -349,7 +349,7 @@ public class RequestHandler implements Runnable {
      */
     private boolean isNotLazy() {
         double lazyness = Math.random();
-        double chance = 0.5;
+        double chance = 0.1;
         return lazyness <= chance;
     }
 

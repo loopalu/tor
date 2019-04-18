@@ -19,3 +19,13 @@ Lisainfo
 2. "util" kaustas on faili kirjutamiseks ja sealt lugemiseks mõeldud klassid
 3. "tor selgitus.jpg" on pilt sellest, mille õpetaja Verrev klassis tahvlile tegi
 
+-----------------------------------------------------------------
+Gerdi soovitused
+--------
+- console, conf file
+- mime type?
+- status võiks tulla tagasi kui vigane url
+- retry 
+- high lazyness testing
+- veateade et ei saanud site kätte pärast mingit aega
+
