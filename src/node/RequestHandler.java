@@ -82,18 +82,7 @@ public class RequestHandler implements Runnable {
      * @throws IOException The exception in the case of network error
      */
     private void sendForward() throws IOException {
-        // Get url, id and timetolive out from headers
-        for (String string : httpText) {
-            if (string.contains("url")) {
-                this.getData = string.substring(5);
-            }
-            if (string.contains("id")) {
-                this.id = string.substring(4);
-            }
-            if (string.contains("timetolive")) {
-                this.timeToLive = Integer.valueOf(string.substring(12));
-            }
-        }
+        getHeaders();
         if (timeToLive != null) {
             // If timetolive is not 0, then forwards the request
             if (timeToLive > 0) {
@@ -116,15 +105,14 @@ public class RequestHandler implements Runnable {
     }
 
     /**
-     * Sends POST request back with downloaded file
-     *
-     * @throws IOException The exception in the case it is not possible to write into the file
+     * Gets headers from httpText
      */
-    private void sendBack() throws IOException {
-        boolean myRequest = false;
-
-        // Gets id and timetolive out from headers
+    private void getHeaders() {
+        // Get url, id and timetolive out from headers
         for (String string : httpText) {
+            if (string.contains("url")) {
+                this.getData = string.substring(5);
+            }
             if (string.contains("id")) {
                 this.id = string.substring(4);
             }
@@ -132,6 +120,15 @@ public class RequestHandler implements Runnable {
                 this.timeToLive = Integer.valueOf(string.substring(12));
             }
         }
+    }
+
+    /**
+     * Sends POST request back with downloaded file
+     *
+     * @throws IOException The exception in the case it is not possible to write into the file
+     */
+    private void sendBack() throws IOException {
+        getHeaders();
         if (timeToLive != null) {
             // If timetolive is not 0 then tries to process the request (either download or forward to neighbors)
             if (timeToLive > 0) {
@@ -203,8 +200,6 @@ public class RequestHandler implements Runnable {
         boolean myRequest = false;
 
         for (String request : myRequests) {
-            //System.out.println(id + " " + request); //For debug to see id-s of my own request and compare to id of received request
-
             // Checks if node had sent out request with given id
             if (request.split(":")[0].equals(id)) {
                 myRequest = true;
@@ -221,19 +216,10 @@ public class RequestHandler implements Runnable {
      * @throws IOException The exception in the case file does not exist
      */
     private void download() throws IOException {
-        for (String string : httpText) {
-            if (string.contains("url")) {
-                this.getData = URLDecoder.decode(string.substring((5)));
-            }
-            if (string.contains("id")) {
-                this.id = string.substring(4);
-            }
-        }
-
+        getHeaders();
         if (!isMyRequest() && getData != null) {
-
             // Validates the URL and acts accordingly
-            String urlValidity = urlValidator(getData);
+            String urlValidity = urlValidator(URLDecoder.decode(getData));
             if (urlValidity.equals("Host does not exist!")) {
                 sendError("Host does not exist!");
             } else if (urlValidity.equals("false")) {
@@ -241,7 +227,7 @@ public class RequestHandler implements Runnable {
             } else if (urlValidity.equals("URL is not valid!")) {
                 sendError("URL is not valid!");
             } else {
-                downloadAndSend(getData);
+                downloadAndSend(URLDecoder.decode(getData));
             }
         }
     }
