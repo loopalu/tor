@@ -80,7 +80,6 @@ public class RequestHandler implements Runnable {
      * @throws IOException The exception in the case of network error
      */
     private void sendForward() throws IOException {
-        System.out.println("GET - forward");
         // Get url, id and timetolive out from headers
         for (String string : httpText) {
             if (string.contains("url")) {
@@ -121,7 +120,6 @@ public class RequestHandler implements Runnable {
      */
     private void sendBack() throws IOException {
         boolean myRequest = false;
-        System.out.println("POST - back");
 
         // Gets id and timetolive out from headers
         for (String string : httpText) {
@@ -207,8 +205,6 @@ public class RequestHandler implements Runnable {
      * @throws IOException The exception in the case file does not exist
      */
     private void download() throws IOException {
-        System.out.println("GET - download");
-
         for (String string : httpText) {
             if (string.contains("url")) {
                 this.getData = URLDecoder.decode(string.substring((5)));
@@ -226,6 +222,7 @@ public class RequestHandler implements Runnable {
                 break;
             }
         }
+
         if (!myRequest && getData != null) {
 
             // Validates the URL and acts accordingly
