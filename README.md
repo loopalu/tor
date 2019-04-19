@@ -22,7 +22,6 @@ Lisainfo
 -----------------------------------------------------------------
 Gerdi soovitused
 --------
-- mime type?
 - retry 
 - high lazyness testing
 - veateade et ei saanud site kätte pärast mingit aega
