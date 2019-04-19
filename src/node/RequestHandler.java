@@ -167,12 +167,12 @@ public class RequestHandler implements Runnable {
 
                                 // If nothing wrong with request then saves file
                             } else {
-                                String fileType = (String) bodyParts.get("fileType");
+                                String mimeType = (String) bodyParts.get("mimetype");
                                 String encodedString = (String) bodyParts.get("content");
                                 byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
 
                                 // create output file
-                                FileOutputStream outputStream = new FileOutputStream(port + "." + fileType);
+                                FileOutputStream outputStream = new FileOutputStream(port + "." + mimeType.split("/")[1]);
                                 outputStream.write(decodedBytes);
                                 outputStream.close();
                             }
@@ -251,13 +251,13 @@ public class RequestHandler implements Runnable {
      * @throws IOException The exeption in case file is not found
      */
     private void downloadAndSend(String getData) throws IOException {
-        String fileType = fileType(getData);
+        String mimeType = getMimeType(getData);
 
         URL website = new URL(getData);
         ReadableByteChannel byteChannel = Channels.newChannel(website.openStream());
 
         // Save the url into appropriate file with relevant extension
-        String fileName = port + "." + fileType;
+        String fileName = port + "." + mimeType.split("/")[1];
         FileOutputStream outputStream = new FileOutputStream(fileName);
 
         outputStream.getChannel().transferFrom(byteChannel, 0, Long.MAX_VALUE);
@@ -271,11 +271,10 @@ public class RequestHandler implements Runnable {
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("status", "200");
-        jsonObject.put("mimetype", "text/html");
+        jsonObject.put("mimetype", mimeType);
 
         // Remove all nonprintable characters from Base64 string (End Of File and others)
         jsonObject.put("content", encodedString.replaceAll("[\\x00-\\x09\\x11\\x12\\x14-\\x1F\\x7F\\x04]", ""));
-        jsonObject.put("fileType", fileType);
 
         for (String neighbor : NodeController.getNeighbours()) {
 
@@ -359,33 +358,23 @@ public class RequestHandler implements Runnable {
     }
 
     /**
-     * Checks the URL for file type
+     * Checks the URL for mime type
      *
-     * @return  Found file type
+     * @return  Found mime type
      */
-    private String fileType(String getData) {
-        String fileType;
-        if (getData.contains(".jpg")) {
-            fileType = "jpg";
-        } else if (getData.contains(".pdf")) {
-            fileType = "pdf";
-        } else if (getData.contains(".gif")) {
-            fileType = "gif";
-        } else if (getData.contains(".txt")) {
-            fileType = "txt";
-        } else if (getData.contains(".html")) {
-            fileType = "html";
-        } else if (getData.contains(".rar")) {
-            fileType = "rar";
-        } else if (getData.contains(".bmp")) {
-            fileType = "bmp";
-        } else if (getData.contains(".jpeg")) {
-            fileType = "jpeg";
-        } else if (getData.contains(".png")) {
-            fileType = "png";
-        } else {
-            fileType = "html";
+    private String getMimeType(String getData) {
+        URL url;
+        try {
+            url = new URL(getData);
+            HttpURLConnection connection = (HttpURLConnection)  url.openConnection();
+            connection.setRequestMethod("HEAD");
+            connection.connect();
+            String contentType = connection.getContentType();
+            connection.disconnect();
+            return contentType.split(";")[0];
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return fileType;
+        return "";
     }
 }
