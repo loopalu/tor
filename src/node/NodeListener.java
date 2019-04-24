@@ -32,7 +32,7 @@ public class NodeListener implements Runnable {
                 throw new RuntimeException(
                         "Error accepting client connection", e);
             }
-            new Thread(new ConsoleReader(port, clientSocket)).start();
+            new Thread(new RequestReceiver(port, clientSocket)).start();
         }
         System.out.println("Server Stopped.");
     }

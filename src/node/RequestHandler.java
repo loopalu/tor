@@ -109,7 +109,6 @@ public class RequestHandler implements Runnable {
                     conn.setRequestProperty("id", id);
                     conn.setRequestProperty("timetolive", String.valueOf(timeToLive));
                     conn.setDoOutput(true);
-
                     Reader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
                     reader.close();
                 }

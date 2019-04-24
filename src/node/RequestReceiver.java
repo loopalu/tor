@@ -4,18 +4,18 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class ConsoleReader implements Runnable {
+public class RequestReceiver implements Runnable {
 
     private int port;
     private Socket clientSocket;
 
-    ConsoleReader(int port, Socket clientSocket) {
+    RequestReceiver(int port, Socket clientSocket) {
         this.port = port;
         this.clientSocket = clientSocket;
     }
 
     /**
-     * Run ConsoleReader to receive URL from console
+     * Run RequestReceiver to receive URL from console
      */
     public void run() {
         try {
