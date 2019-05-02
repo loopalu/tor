@@ -23,6 +23,5 @@ Lisainfo
 Gerdi soovitused
 --------
 - retry 
-- high lazyness testing
 - veateade et ei saanud site kätte pärast mingit aega
 
