@@ -10,7 +10,9 @@ public class tester1 {
         try {
             propertyReader = new PropertyReader("9000config.properties");
             int port = propertyReader.getPort();
-            new Thread(new NodeController( "http://localhost","http://localhost:1215", port)).start();
+            String registryIP = propertyReader.getRegistryIP();
+            String myIP = propertyReader.getMyIP();
+            new Thread(new NodeController( myIP,registryIP, port)).start();
         } catch (IOException e) {
             e.printStackTrace();
         }

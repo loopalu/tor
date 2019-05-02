@@ -10,6 +10,8 @@ public class PropertyReader {
     private int timeToLive;
     private double lazyness;
     private int timeToWaitUrl;
+    private String registryIP;
+    private String myIP;
 
     /**
      * Reads config.properties file and gets the data
@@ -29,6 +31,8 @@ public class PropertyReader {
         this.timeToLive = Integer.parseInt(properties.getProperty("timeToLive"));
         this.lazyness = Double.parseDouble(properties.getProperty("lazyness"));
         this.timeToWaitUrl = Integer.parseInt(properties.getProperty("timeToWaitUrl"));
+        this.registryIP = properties.getProperty("registryIP");
+        this.myIP = properties.getProperty("myIP");
     }
 
     public int getPort() {
@@ -45,5 +49,13 @@ public class PropertyReader {
 
     public int getTimeToWaitUrl() {
         return timeToWaitUrl;
+    }
+
+    public String getRegistryIP() {
+        return registryIP;
+    }
+
+    public String getMyIP() {
+        return myIP;
     }
 }
